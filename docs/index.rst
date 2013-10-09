@@ -6,12 +6,23 @@
 Welcome to Django FTP Deploy's documentation!
 =============================================
 
+django-ftp-deploy allow you to automatically deployments of Git repositories to FTP servers. You don't need to install git on the server.
+
+Supported GIT repositories:
+
+* Bitbucket
+* Github (planned)
+
+
 Contents:
+---------
+
 
 .. toctree::
    :maxdepth: 2
 
-
+   installation
+   configuration
 
 Indices and tables
 ==================
