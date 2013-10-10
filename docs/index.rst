@@ -25,6 +25,13 @@ User Guide
    configuration
    usage
 
+TO DO
+-----  
+
+* Support fot Github repositories
+
+
+
 Indices and tables
 ==================
 
