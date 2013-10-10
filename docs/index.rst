@@ -14,8 +14,8 @@ Supported GIT repositories:
 * Github (planned)
 
 
-Contents:
----------
+User Guide
+----------
 
 
 .. toctree::
@@ -23,6 +23,7 @@ Contents:
 
    installation
    configuration
+   usage
 
 Indices and tables
 ==================
