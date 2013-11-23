@@ -2,16 +2,21 @@ from django.conf import settings
 
 
 BITBUCKET_SETTINGS = getattr(settings, 'DEPLOY_BITBUCKET_SETTINGS', {
-	'username' 		: '',
-	'password' 		: '',
-	'branch' 		: '',
+    'username' 		: '',
+    'password' 		: '',
 })
 
-FTP_SETTINGS = getattr(settings, 'DEPLOY_FTP_SETTINGS', {
-	'host' 		: '',
-	'username' 	: '',
-	'password'  : '',
-	'path' 		: '',
+
+DEPLOY_NOTIFICATIONS = getattr(settings, 'DEPLOY_NOTIFICATIONS', {
+   'success':{
+        'emails' : [],
+        'deploy_user' : True,
+        'commit_user' : True
+    },
+    'fail':{
+        'emails' : [],
+        'deploy_user' : True,
+        'commit_user' : False
+    }
 })
 
-DEPLOY_SECRET_KEY = getattr(settings, 'DEPLOY_SECRET_KEY', '')

@@ -1,3 +1,6 @@
+v1.1.0 11.21.2013
+-new rewritten version
+
 v1.0.4, 07.10.2013 
 -add requirements
 

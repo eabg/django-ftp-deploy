@@ -1,92 +1,117 @@
 # -*- coding: utf-8 -*-
-
 import os
-import StringIO
-import pycurl
 import json
 from ftplib import FTP
-import certifi
+import tempfile
 
+from django.views.generic.base import View
 from django.http import HttpResponse, Http404
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Log
+from .models import Log, Service
 from .conf import *
-from .utils import ftp_makedirs
+from .utils.core import absolute_url
+from .utils.ftp import ftp_connection
+from .utils.email import notification_success, notification_fail
+from .utils.curl import curl_connection
 
+class DeployView(View):
 
-@csrf_exempt
-def Bitbucket(request, secret_key):
-    """
-    View response to bitbucket POST request
-    """
-    if secret_key != DEPLOY_SECRET_KEY:
-        raise Http404
+    """Main view receive POST Hook from repository"""
 
-    if request.method == 'POST':
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.service = Service.objects.get(secret_key=kwargs['secret_key'])
+        except Exception, e:
+            raise Http404
 
-        # BitBucket Settings
-        bitbucket_username = BITBUCKET_SETTINGS['username']
-        bitbucket_password = BITBUCKET_SETTINGS['password']
-        bitbucket_branch = BITBUCKET_SETTINGS['branch']
+        self.status = 200
 
-        # FTP Settings
-        ftp_host = FTP_SETTINGS['host']
-        ftp_username = FTP_SETTINGS['username']
-        ftp_password = FTP_SETTINGS['password']
-        ftp_path = FTP_SETTINGS['path']
+        self.bitbucket_username = BITBUCKET_SETTINGS['username']
+        self.bitbucket_password = BITBUCKET_SETTINGS['password']
+        self.bitbucket_branch = self.service.repo_branch
+
+        self.ftp_host = self.service.ftp_host
+        self.ftp_username = self.service.ftp_username
+        self.ftp_password = self.service.ftp_password
+        self.ftp_path = self.service.ftp_path
+
+        return super(DeployView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
 
         json_string = request.POST['payload'].decode('string_escape').replace('\n', '')
-        data = json.loads(json_string)
+        self.data = json.loads(json_string)
+        last_commit = len(self.data['commits']) - 1
 
-        uri = data['repository']['absolute_url']
-        last_commit = len(data['commits']) - 1
-
-        if data['commits'][last_commit]['branch'] == bitbucket_branch:
+        if self.data['commits'][last_commit]['branch'] == self.bitbucket_branch:
 
             try:
-                ftp = FTP(ftp_host, ftp_username, ftp_password)
+                self.log = Log()
+                self.log.payload = json_string
+
+                self.ftp = ftp_connection(self.ftp_host, self.ftp_username, self.ftp_password, self.ftp_path)
+                self.ftp.connect()
+
             except Exception, e:
-                Log.objects.create(user='FTP Connection', message=e, passed=False)
+                self.log.user = 'FTP Connection'
+                self.log.status_message = e
+                self.log.service = self.service
+                self.log.status = False
+                self.service.status = False
+                self.status = 500
+                notification_fail(absolute_url(request).build(), self.service, json_string, e)
             else:
-                for commit in data['commits']:
-                    node = commit['node']
-                    files = commit['files']
-                    author = commit['author']
-                    commit_msg = commit['message']
-                    
-                    try:    
-                        for file_ in files:
-                            path = file_['file']
-                            if file_['type'] == 'removed':
-                                ftp.delete(ftp_path + path.encode('ascii', 'ignore'))
+                try:
+                    curl = curl_connection(self.bitbucket_username, self.bitbucket_password)
+                    curl.authenticate()
+
+                    for i, commit in enumerate(self.data['commits']):
+
+                        for files in commit['files']:
+                            file_path = files['file']
+
+                            if files['type'] == 'removed':
+                                self.ftp.remove_file(file_path)
                             else:
-                                url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (uri, node, path)
+                                url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (self.data['repository']['absolute_url'], commit['node'], file_path)
                                 url = str(url.encode('utf-8'))
 
-                                dirname = os.path.dirname(path)
-                                ftp_makedirs(ftp, ftp_path, dirname)
-                                
-                                b = StringIO.StringIO()
-                                curl = pycurl.Curl()
-                                curl.setopt(pycurl.CAINFO, certifi.where())
-                                curl.setopt(curl.USERPWD, '%s:%s' % (bitbucket_username, bitbucket_password))
-                                curl.setopt(curl.URL, url)
-                                curl.setopt(curl.WRITEFUNCTION, b.write)
-                                curl.perform()
-                                local_file = open(ftp_path + path, 'w')
-                                local_file.write(b.getvalue())
+                                value = curl.perform(url)
 
-                    except Exception, e:
-                        Log.objects.create(user=author, message=e, passed=False)
-                    else:
-                        Log.objects.create(user=author, message=commit_msg, passed=True)   
-                    finally:
-                        local_file.close()
-                        curl.close()
+                                temp_file = tempfile.NamedTemporaryFile(delete=False)
+                                temp_file.write(value)
+                                temp_file.close()
+                                temp_file = open(temp_file.name, 'rb')
 
+                                self.ftp.make_dirs(file_path)
+                                self.ftp.create_file(file_path, temp_file)
+
+                                temp_file.close()
+                                os.unlink(temp_file.name)
+
+                except Exception, e:
+                    self.log.user = self.data['user']
+                    self.log.status_message = e
+                    self.log.service = self.service
+                    self.log.status = False
+                    self.service.status = False
+                    self.status = 500
+                    notification_fail(absolute_url(request).build(), self.service, json_string, e)
+                else:
+                    self.log.user = self.data['user']
+                    self.log.service = self.service
+                    self.log.status = True
+                    self.log.save()
+                    notification_success(absolute_url(request).build(), self.service, json_string)
+                finally:
+                    curl.close()
 
             finally:
-                ftp.quit()
+                self.ftp.quit()
+                self.log.save()
+                self.service.save()
 
-    return HttpResponse()
+        return HttpResponse(status=self.status)

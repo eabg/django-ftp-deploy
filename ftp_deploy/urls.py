@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
+from .views import DeployView
 
 urlpatterns = patterns('',
-                       url(r'^bitbucket/(?P<secret_key>.+)$', 'ftp_deploy.views.Bitbucket', name='ftpdeploy_bitbucket'),
+                       url(r'^deploy/(?P<secret_key>.+)$', DeployView.as_view(), name='ftpdeploy_deploy'),
                        )
