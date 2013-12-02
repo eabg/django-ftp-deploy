@@ -23,6 +23,8 @@ The **Dashboard** page is available at::
 | The dashboard allows you to manage all of your services from one page. All failing services are placed on the top of the list, to make it easy to find all services containing issues.
 | A screenshot is available in the :ref:`Other <other>` section.
 
+
+
 Add Service
 -----------
 

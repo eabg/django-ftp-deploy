@@ -41,29 +41,24 @@ User Guide
    usage
    other
 
-Developer Guide
----------------
 
-.. toctree::
-   :maxdepth: 4
-
-   api/ftp_deploy
-   api/ftp_deploy.server
-
-
-TO-DO
------  
-*v1.3*
-
-* Github support
+Roadmap
+-------  
 
 *v1.2*
 
-* login screen
-* cron services validation
-* email notification configuration per service
+* Github support
+* **Queuing deploys**
+* Status of deploying with progressbar
+* Login screen
+* Cron validation
+* Email notification configuration per service
 
 
+Knowing issues
+--------------
+
+* Queuing deploys not supported. If deploy is run before last deploy has been finished, that may cause inconsistent data between repository and FTP
 
 
 Indices and tables

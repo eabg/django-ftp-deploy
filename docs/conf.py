@@ -249,34 +249,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
-class Mock(object):
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return Mock()
-
-    @classmethod
-    def __getattr__(cls, name):
-        if name in ('__file__', '__path__'):
-            return '/dev/null'
-        elif name[0] == name[0].upper():
-            mockType = type(name, (), {})
-            mockType.__module__ = __name__
-            return mockType
-        else:
-            return Mock()
-
-MOCK_MODULES = ['libcurl4-gnutls-dev', 'librtmp-dev']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = Mock()
-
-
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),'settings')))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
-import settings
-from django.core.management import setup_environ
-setup_environ(settings)
