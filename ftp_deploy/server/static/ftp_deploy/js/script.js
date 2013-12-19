@@ -4,13 +4,6 @@ $(document).ready(function(){
     /*-----------------------------------------------------------------------------*/
     init();
 
-    $(document).on('click', '.show-commits',function(){
-        $(this).hide().next('span').fadeIn();
-        return false;
-
-    });
-
-
     /* Dashboars */
     /*-----------------------------------------------------------------------------*/
 
@@ -26,7 +19,7 @@ $(document).ready(function(){
         $('#service-list').css('opacity',0.5)
         if ($("input[name=status]").is(":checked")) status = 0;
         $('.pagination').remove();
-        $('#service-list').load(action, {services:services} , function(){
+        $('#service-list').load(action + ' #service-list >* ', {services:services} , function(){
             $('#service-list').css('opacity',1);
             init();
         });
@@ -41,7 +34,7 @@ $(document).ready(function(){
 
         $(this).html('<i class="fa fa-spinner fa-spin c-default"></i>');
 
-        $(container).load(href + ' tr>*', {response:'list'}, function(){
+        $(container).load(href + ' #service-list tr>*', {response:'list'}, function(){
             init();
         });
         return false;
@@ -77,6 +70,15 @@ $(document).ready(function(){
     /* Service Manage */
     /*-----------------------------------------------------------------------------*/
 
+    $(document).on('click', '#service-delete',function(){
+        var href = $(this).attr('href');
+        var container = $('#service-actions');
+        $('btn-group',container).remove();
+        $(container).load(href + ' #page>*', function(){
+        });
+        return false;
+    });
+
     // refresh status
     $(document).on('click', '#service-manage-status',function(){
         var href = $(this).attr('href');
@@ -91,6 +93,7 @@ $(document).ready(function(){
         return false;
     });
 
+    // add POST hook
     $(document).on('click', '#add_hook',function(){
         var href = $(this).attr('href');
         var _this = $(this);
@@ -127,6 +130,7 @@ $(document).ready(function(){
         return false;
     });
 
+
     // init restore modal box
     $(document).on('click', '#restore-init',function(){
         var href = $(this).attr('href');
@@ -146,6 +150,7 @@ $(document).ready(function(){
         return false;
     });
 
+
     // restore deploys
     $(document).on('submit', '#restore-form',function(){
         var action = $(this).attr('action');
@@ -159,16 +164,16 @@ $(document).ready(function(){
         }).done(function(content) {
             $('#restore-modal').modal('hide');
             $('#fail-deploys').remove();
-            $('#fail-restore-progress').slideDown();
+            $('#deploy-progress').slideDown();
 
             $.ajax({
                 type: "POST",
                 url: content,
                 data:{payload: payload}
             }).done(function() {
-                $('#fail-restore-progress').hide().before('<div class="alert alert-success">Resore completed!</div>')
+                $('#deploy-progress').hide().before('<div class="alert alert-success">Resore completed!</div>')
             }).fail(function(content) {
-                $('#fail-restore-progress').hide().before('<div class="alert alert-danger">Resore fail!</div>')
+                $('#deploy-progress').hide().before('<div class="alert alert-danger">Resore fail!</div>')
             }).always(function(){
                 $('#service-manage-status').click();
             });
@@ -179,8 +184,29 @@ $(document).ready(function(){
         return false;
     });
 
+    // service notification
+    $(document).on('click', '#notification',function(){
+        var href = $(this).attr('href');
+        var _this = $(this);
+        
+        $.ajax({
+            type: "GET",
+            url: href
+        }).done(function(content) {
+            $('body').append(content);
+            $('#notification-modal').modal('show');
+            $('#notification-modal').on('hidden.bs.modal', function () {
+                $('#notification-modal').remove();
+            })
+        });
+        return false;
+    });
 
-    /* Service Form */
+ 
+
+
+
+    /* service add/edit form */
     /*-----------------------------------------------------------------------------*/
 
     $('#id_repo_source').bind('change', function () {
@@ -189,7 +215,10 @@ $(document).ready(function(){
         var options = '<option></option>';
 
 
-        if (val == '') $('#id_repo_name').show().next().hide();
+        if (val == ''){
+            $('#id_repo_name').show().next().hide();
+            return false;
+        }
         if(val == 'bb') data = 'respositories';
         
         $.ajax({
@@ -220,5 +249,5 @@ $(document).ready(function(){
 function init(){
     "Initial properties"
     $('i[data-toggle=tooltip]').tooltip({html:true,delay:300});
-    $('span[data-toggle=popover]').popover({html:true,delay:0,placement:'top'}).css('cursor','pointer');
+    $('*[data-toggle=popover]').popover({html:true,delay:0,placement:'left'}).css('cursor','pointer');
 }

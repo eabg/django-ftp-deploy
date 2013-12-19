@@ -59,6 +59,7 @@ class notification():
 
     def send(self):
         """Sent method process emails from list returned by emails() method"""
+
         for recipient in self.emails():
             text_content = render_to_string(self.template_text, self.context())
             html_content = render_to_string(self.template_html, self.context())
@@ -80,13 +81,16 @@ class notification_success(notification):
 
     def emails(self):
         emails_list = list()
-        emails_list += DEPLOY_NOTIFICATIONS['success']['emails']
+        notifications = self.service.notification
 
-        if DEPLOY_NOTIFICATIONS['success']['deploy_user']:
-            emails_list += self.deploy_user()
+        if notifications:
+            emails_list += notifications.get_success()
 
-        if DEPLOY_NOTIFICATIONS['success']['commit_user']:
-            emails_list += commits_parser(self.commits).email_list()
+            if notifications.deploy_user_success():
+                emails_list += self.deploy_user()
+
+            if notifications.commit_user_success():
+                emails_list += commits_parser(self.commits).email_list()
 
         return list(set(emails_list))
 
@@ -115,13 +119,17 @@ class notification_fail(notification):
 
     def emails(self):
         emails_list = list()
-        emails_list += DEPLOY_NOTIFICATIONS['fail']['emails']
+        notifications = self.service.notification
 
-        if DEPLOY_NOTIFICATIONS['fail']['deploy_user']:
-            emails_list += self.deploy_user()
+        if notifications:
 
-        if DEPLOY_NOTIFICATIONS['fail']['commit_user']:
-            emails_list += commits_parser(self.commits).email_list()
+            emails_list += notifications.get_fail()
+
+            if notifications.deploy_user_fail():
+                emails_list += self.deploy_user()
+
+            if notifications.commit_user_fail():
+                emails_list += commits_parser(self.commits).email_list()
 
         return list(set(emails_list))
 

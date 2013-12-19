@@ -88,31 +88,6 @@ Configuration
         | *password*: bitbucket password
 
 
-* Add ``DEPLOY_NOTIFICATIONS`` configuration to your settings::
-
-    DEPLOY_NOTIFICATIONS = {
-      'success':{
-          'emails' : ['email_1@example.com','email_2@example.com'],
-          'deploy_user' : True,
-          'commit_user' : True
-      },
-      'fail':{
-          'emails' : [],
-          'deploy_user' : True,
-          'commit_user' : False
-      }
-    }
-
-
-  Deploy Notifications include separate configurations for success and failure notifications.
-
-  ``DEPLOY_NOTIFICATIONS``
-        | *emails*: list of emails receive notification
-        | *deploy_user*: user who make an deploy
-        | *commit_user*: email list of users who made a commit(s) included in deploy
-
-
-
 
 * The FTP Deploy Dashboard **requires** the *bootstrap3* template pack for `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
 

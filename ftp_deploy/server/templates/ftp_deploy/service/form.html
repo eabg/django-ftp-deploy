@@ -27,22 +27,39 @@
 
 {% endblock extrahead %}
 
+{% block title %}
+    {% if service %} 
+        <div>
+            <div id="service-actions" class="pull-right">
+                <div class="btn-group pull-right">
+                    <a href="{% url 'ftpdeploy_service_manage' service.pk %}" class="btn btn-primary">Manage</a> 
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{% url 'ftpdeploy_service_delete' service.pk %}" id="service-delete">Delete</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <h2 class="pull-left">{{service.repo_name}} <small>Edit</small></h2>
+    {% else %}
+        <h2 class="pull-left">Service <small>Add</small></h2>
+    {% endif %}
+{% endblock title %}
+
+
 {% block content %}
     
     <div class="row">
-        <div class="col-sm-8"><h2>{{title}}</h2></div>
+
         <div class="col-sm-4">
-            <div class="pull-right">
-                <a href="{% url 'ftpdeploy_dashboard' %}" class="btn btn-default">Dashboard</a>
-                {% if service %} <a href="{% url 'ftpdeploy_service_manage' service.pk %}" class="btn btn-primary">Manage</a> {% endif %}
-            </div>
+            {% include "ftp_deploy/menu.html" %}
         </div>
-        <span class="clearfix"></span>
-        <br>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            {% crispy form %}
+
+        <div class="col-sm-8">
+            {% crispy form %}      
         </div>
     </div>
 

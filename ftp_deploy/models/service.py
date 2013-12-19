@@ -5,9 +5,12 @@ import json
 from django.db import models
 from django.core.urlresolvers import reverse
 
-from .utils.core import service_check, commits_parser
+from ftp_deploy.utils.core import service_check
+from .notification import Notification
+
 
 class Service(models.Model):
+
     ftp_host = models.CharField('Host', max_length=255)
     ftp_username = models.CharField('Username', max_length=50)
     ftp_password = models.CharField('Password', max_length=50)
@@ -23,14 +26,20 @@ class Service(models.Model):
 
     status = models.BooleanField()
     status_message = models.TextField()
+    notification = models.ForeignKey(Notification, null=True, blank=True, on_delete=models.SET_NULL)
+    lock = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def __init__(self, *args, **kwargs):
+        self.check = True
+        return super(Service, self).__init__(*args, **kwargs)
 
     def __unicode__(self):
         return self.repo_name
 
     def deploys(self):
-        return self.log_set.filter(status=1).count()
+        return self.log_set.filter(status=True).count()
 
     def fail_deploys(self):
         return self.log_set.filter(status=False).filter(skip=False).count()
@@ -49,38 +58,25 @@ class Service(models.Model):
 
     def save(self, **kwargs):
         """Check service status on save"""
-        message = list()
 
-        fails, message = service_check(self).check_all()
+        if self.check:
+            message = list()
+            fails, message = service_check(self).check_all()
 
-        if fails[2]:
-            self.repo_hook = False
-        else:
-            self.repo_hook = True
+            if fails[2]:
+                self.repo_hook = False
+            else:
+                self.repo_hook = True
 
-        if True in fails:
-            self.status_message = '<br>'.join(message)
-            self.status = False
-        else:
-            self.status = True
-            self.status_message = ''
+            if True in fails:
+                self.status_message = '<br>'.join(message)
+                self.status = False
+            else:
+                self.status = True
+                self.status_message = ''
 
         super(Service, self).save()
 
-
-class Log(models.Model):
-    service = models.ForeignKey(Service, blank=True)
-    payload = models.TextField()
-    user = models.CharField(max_length=200)
-    status = models.BooleanField()
-    status_message = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    skip = models.BooleanField(default=False)
-
-    def commits_info(self):
-        commits = json.loads(self.payload)['commits']
-        return commits_parser(commits).commits_info()
-       
-
     class Meta:
-        ordering = ('-created',)
+        app_label = 'ftp_deploy'
+        db_table = 'ftp_deploy_service'

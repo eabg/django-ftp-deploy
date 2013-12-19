@@ -1,8 +1,9 @@
 import json
 
-from django.views.generic.base import View, TemplateResponseMixin
-from django.views.generic.detail import SingleObjectMixin
-from django.views.generic import ListView, UpdateView, DeleteView, DetailView, CreateView
+from django.views.generic.base import View, TemplateResponseMixin, TemplateView
+from django.views.generic.edit import ModelFormMixin, ProcessFormView
+from django.views.generic.detail import SingleObjectMixin, SingleObjectTemplateResponseMixin
+from django.views.generic import ListView, UpdateView, DeleteView, DetailView, CreateView, FormView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -10,13 +11,13 @@ from django.contrib import messages
 from django.db.models import Max
 from django.http import HttpResponse, Http404
 
-from braces.views import JSONResponseMixin, LoginRequiredMixin, CsrfExemptMixin
+from braces.views import JSONResponseMixin, LoginRequiredMixin
 
 from ftp_deploy.conf import *
-from ftp_deploy.models import Service, Log
+from ftp_deploy.models import Service, Log, Notification
 from ftp_deploy.utils.curl import curl_connection
 from ftp_deploy.utils.core import commits_parser, absolute_url
-from .forms import ServiceForm
+from ftp_deploy.server.forms import ServiceForm, ServiceNotificationForm
 
 
 class DashboardView(LoginRequiredMixin, ListView):
@@ -45,25 +46,20 @@ class ServiceManageView(LoginRequiredMixin, DetailView):
     template_name = "ftp_deploy/service/manage.html"
 
     def get_context_data(self, **kwargs):
+
         context = super(ServiceManageView, self).get_context_data(**kwargs)
-        context['recent_logs'] = self.get_object().log_set.all()[:15]
-        context['fail_logs'] = self.get_object().log_set.filter(status=0).filter(skip=0)
+        context['recent_logs'] = self.object.log_set.all()[:15]
+        context['fail_logs'] = self.object.log_set.filter(status=0).filter(skip=0)
         return context
 
 
 class ServiceAddView(LoginRequiredMixin, CreateView):
 
     """View for add serives"""
-
     model = Service
     form_class = ServiceForm
     success_url = reverse_lazy('ftpdeploy_dashboard')
     template_name = "ftp_deploy/service/form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(ServiceAddView, self).get_context_data(**kwargs)
-        context['title'] = 'Add Service'
-        return context
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, 'Service has been added.')
@@ -73,18 +69,12 @@ class ServiceAddView(LoginRequiredMixin, CreateView):
 class ServiceEditView(LoginRequiredMixin, UpdateView):
 
     """View for edit services"""
-
     model = Service
     form_class = ServiceForm
     template_name = "ftp_deploy/service/form.html"
 
     def get_success_url(self):
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
-
-    def get_context_data(self, **kwargs):
-        context = super(ServiceEditView, self).get_context_data(**kwargs)
-        context['title'] = 'Edit Service'
-        return context
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, 'Service has been updated.')
@@ -142,7 +132,7 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
 
     model = Service
     prefetch_related = ["log_set"]
-    template_name = "ftp_deploy/service/modal.html"
+    template_name = "ftp_deploy/service/restore-modal.html"
 
     def get_context_data(self, **kwargs):
         context = super(ServiceRestoreView, self).get_context_data(**kwargs)
@@ -180,42 +170,19 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         return logs
 
 
-class LogView(LoginRequiredMixin, ListView):
+class ServiceNotificationView(LoginRequiredMixin,  UpdateView):
 
-    """View for display logs"""
+    model = Service
+    form_class = ServiceNotificationForm
+    template_name = "ftp_deploy/notification/notification-modal.html"
 
-    model = Log
-    context_object_name = 'logs'
-    template_name = "ftp_deploy/log/log.html"
-    paginate_by = 25
+    def get_success_url(self):
+        return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
 
-    def get_context_data(self, **kwargs):
-        context = super(LogView, self).get_context_data(**kwargs)
-        context['service_list'] = Service.objects.all().values('repo_name', 'pk')
-        return context
-
-    def post(self, request, *args, **kwargs):
-        logs = self.get_queryset()
-        if self.request.POST['services']:
-            logs = logs.filter(service__pk=self.request.POST['services'])
-
-        if not int(self.request.POST['status']):
-            logs = logs.filter(status=self.request.POST['status'])
-
-        return render_to_response('ftp_deploy/log/list.html', locals(), context_instance=RequestContext(request))
-
-
-class LogSkipDeployView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View):
-
-    """View for skip fail logs"""
-
-    model = Log
-
-    def post(self, request, *args, **kwargs):
-        log = self.get_object()
-        log.skip = 1
-        log.save()
-        return self.render_json_response({'status': 'success'})
+    def form_valid(self, form):
+        self.object.check = False
+        messages.add_message(self.request, messages.SUCCESS, 'Service notification has been updated.')
+        return super(ServiceNotificationView, self).form_valid(form)
 
 
 class BitbucketAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View):

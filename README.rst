@@ -8,13 +8,14 @@ django-ftp-deploy allows you to automatically deploy GIT repositories to FTP ser
 
 **Features:**
 
+* Login Screen
 * Services Dashboard (a service is one repository-to-ftp configuration)
 * Manage Multiple Services
 * Verification Services Configurations
 * Repository Hook Management
 * Dynamic Loading of Repository list
 * Restore Failed Deploys
-* Configurable Email Notifications
+* Email Notifications per service
 * Statistics of Deployments
 * Deployment Logs
 

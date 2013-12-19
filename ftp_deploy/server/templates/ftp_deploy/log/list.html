@@ -5,13 +5,7 @@
             <td>{{log.service.repo_branch}}</td>
             <td>{{log.created}}</td>
             <td>
-                <a href="#" class="c-default show-commits">{{log.commits_info|length}}</a>
-                <span style="display: none;">
-                    {% for commits in log.commits_info %}
-                        <small>'{{commits.0}}' ({{commits.1}})</small> <br>
-                        <small>{{commits.2}}</small> <br>
-                    {% endfor %}
-                </span>
+                <button class="btn btn-default btn-xs" data-toggle="popover" data-content="{% for commits in log.commits_info %} <small>'{{commits.0}}' ({{commits.1}})</small> <br> <small>{{commits.2}}</small> <hr> {% endfor %}">{{log.commits_info|length}}</button>
             </td>
             <td>{{log.user}} </td>
             <td>

@@ -3,7 +3,7 @@ Usage
 
 Using the django-ftp-deploy module
 
-.. note:: For full functionality you need to have *FTP Deploy Server* installed in your project. For further informations visit :ref:`installation <installation>` section
+.. note:: For full functionality you need to have *FTP Deploy Server* installed in your project, otherwise you can manage your deploys in admin page. For further informations visit :ref:`installation <installation>` section. 
 
 .. important:: It's important to always use **non fast forward** git merge to your deploy branch! Otherwise POST Hook has no information about commits included in merge.
     
@@ -12,11 +12,18 @@ Using the django-ftp-deploy module
       git merge --no-ff
 
 
+Login
+*****
+
+Login screen for FTP Deploy Server application. Page is available at::
+
+  /ftpdeploy/
+
 
 Dashboard
----------
+*********
 
-The **Dashboard** page is available at::
+The Main **Dashboard** page is available at::
 
 	/ftpdeploy/dashboard/
 
@@ -24,11 +31,17 @@ The **Dashboard** page is available at::
 | A screenshot is available in the :ref:`Other <other>` section.
 
 
+Service
+*******
+
+Service is one repository-to-ftp configuration.
+
+
 
 Add Service
 -----------
 
-To add new service click ``Add Service`` button on the dashboard page or visit::
+To add new service click ``Add Service`` button on the *Service* dashboard page or visit::
 
 	/ftpdeploy/service/add
 
@@ -48,6 +61,9 @@ The ``Add Service`` form includes sections with fields listed below. Please read
    | *Respository Slug:* Slug of your Repository Name. This field is populated *dynamically* by using 'slugify' on the repository name
    | *Branch*: Branch name for deploy service
 	
+``Notification``
+
+   | *Notification*: Notification set using by service. 
 
 ``Secutiry``
 
@@ -91,6 +107,10 @@ The manage page contains sections such as:
   | - last deploy user
   | - last deploy date
 
+* Notification 
+   
+  Represent current notification settings. You can change notification by clicking ``Cog icon``
+
 
 *  Status 
    
@@ -125,8 +145,23 @@ The manage page contains sections such as:
   
   List of recent deploys. List mirror `Logs`_ filtered by current service.
 
+
+
+Edit Service
+------------  
+
+To edit service click ``Edit`` button next to the service name or visit::
+  
+  /ftpdeploy/service/{service_id}/edit
+
+Edit page provides the same functionality as the `Add Service`_ page. If you need to load list of your repositories again, you need to reset *Source* drop down list, and choose option again.
+
+After you press submit, service data goes through the validation process again, and redirect you to the `Manage Service`_ page
+
+
+
 Restore Failed Deploys
-**********************
+----------------------
 
 If any deploy fails, the service has an opportunity to restore them. It's possible by capturing payload data from POST Hook and storing the data before a deployment is performed.
 The restoring process works as follows:
@@ -150,19 +185,65 @@ To run restore process you need to press ``Restore`` button.
 .. note:: If your restore keep failing you can manage this manually. As you never lose deploys and commits information you can rely on *File diff*  even after fail restore. You can just transfer and remove all relevant files included in *File diff* and skip all failed deploys. That help you to keep your data consistent if restore fails.
 
 
-Edit Service
-------------  
 
-To edit service click ``cog-icon`` button next to the service name or visit::
+Notifications
+*************
+
+Configurable sets of notifications.
+
+Add/Edit Notification
+---------------------
+
+To add new notification click ``Add Notification`` button on the *Notification* dashboard page or visit::
+
+  /ftpdeploy/notification/add
+
+
+You can add emails as many as you like and choose what kind of notification they going to receive. In addition there are two extra options as follow:
+
+  | *deploy_user*: user who make an deploy
+  | *commit_user*: email list of users who made a commit(s) included in deploy
+
+
+In order to edit notification you can click ``Edit`` button next to notification name or visit::
   
-  /ftpdeploy/service/{service_id}/edit
+  /ftpdeploy/{notification_id}/edit
 
-Edit page provides the same functionality as the `Add Service`_ page. If you need to load list of your repositories again, you need to reset *Source* drop down list, and choose option again.
 
-After you press submit, service data goes through the validation process again, and redirect you to the `Manage Service`_ page
+*Edit Notification* screen provide same functionality as *Add Notification* page.
+
+
+
+Email Templates
+---------------
+
+The email notification system provides html and text templates that can be overriden if you wish. In order to do that you need to create your own templates for success and fail notification separately::
+
+
+  /ftp_deploy/email/email_success.html
+  /ftp_deploy/email/email_success.txt
+
+  /ftp_deploy/email/email_fail.html
+  /ftp_deploy/email/email_fail.txt
+
+
+All templates are rendered with the following context information:
+
+``Success Template``
+  | - *{{service}}* object
+  | - *{{host}}* of the current website (where the email came from)
+  | - *{{commits_info}}* in format [['commit message','commit user','raw node'],[...]]
+  | - *{{files_added}}* , *{{files_modified}}*, *{{files_removed}}* in format ['file_name_1', 'file_name_2', ...]
+
+
+``Fail Template``
+  | - *{{service}}* object
+  | - *{{host}}* of the current website (where the email came from)
+  | - *{{error}}* message of the exception
+
 
 Logs
-----
+****
 
 In order to see logs page you need to click ``Log`` button on the top of the page or visit::
 

@@ -9,7 +9,9 @@ from ftp_deploy.conf import *
 
 
 class service_check(object):
+
     """Service check class, what group together all checking points. Return 'fails' and 'message' lists"""
+
     def __init__(self, service):
         self.service = service
         self.message = list()
@@ -105,3 +107,11 @@ class absolute_url(object):
 
     def build(self):
         return self.request.build_absolute_uri('/')[:-1]
+
+
+class LockError(Exception):
+
+    """Exception if service is locked"""
+
+    def __str__(self):
+        return 'Deploy failed because service is Locked!'

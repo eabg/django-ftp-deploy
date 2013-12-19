@@ -8,18 +8,17 @@ Django FTP Deploy Documentation
 
 django-ftp-deploy allows you to automatically deploy GIT repositories to FTP servers. You don't need to install git on the server!
 
-.. warning:: Version 1.1 is completely rewritten and not back compatible with version 1.0
-
 
 **Features:**
 
+* Login Screen
 * Services Dashboard (a service is one repository-to-ftp configuration)
 * Manage Multiple Services
 * Verification Services Configurations
 * Repository Hook Management
 * Dynamic Loading of Repository list
 * Restore Failed Deploys
-* Configurable Email Notifications
+* Email Notifications per service
 * Statistics of Deployments
 * Deployment Logs
 
@@ -28,6 +27,12 @@ Supported GIT repositories:
 
 * Bitbucket
 * Github (planned)
+  
+
+
+Current tests coverage status:
+
+.. image:: ../ftp_deploy/tests/coverage/coverage_status.png
 
 
 User Guide
@@ -35,30 +40,47 @@ User Guide
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   installation
+   installation 
    usage
    other
+   changelog
+
+
+Get Involved!
+-------------
+
+Get involved and help make this application better!
+
+.. toctree::
+   :maxdepth: 3  
+    
+   getinvolved
+
 
 
 Roadmap
 -------  
 
-*v1.2*
+*v2.0*
 
 * Github support
-* **Queuing deploys**
-* Status of deploying with progressbar
-* Login screen
+* Queuing deploys (along with deploying progressbar)
 * Cron validation
-* Email notification configuration per service
+* FTP password encryption
+* Advanced statistics
+* Full UnitTest and FunctionalTest cover
 
+  
 
 Knowing issues
 --------------
 
-* Queuing deploys not supported. If deploy is run before last deploy has been finished, that may cause inconsistent data between repository and FTP
+Queuing deploys is not supported. If deploy is run before last deploy has been finished, it's captured with failed status. You need to go and manually restore deploy then, to make your repository and FTP data consisent. 
+
+Issue will be fixed by queuing deploys using `Celery <http://docs.celeryproject.org/en/latest/index.html>`_ 
+
 
 
 Indices and tables

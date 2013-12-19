@@ -1,4 +1,10 @@
-v1.1.0 11.21.2013
+v1.2.0 19.12.2013
+-login screen for server application
+-implement notification per service
+-new design
+-rearrange application structure
+
+v1.1.0 21.11.2013
 -new rewritten version
 
 v1.0.4, 07.10.2013 
