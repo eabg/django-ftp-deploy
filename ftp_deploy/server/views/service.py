@@ -46,7 +46,6 @@ class ServiceManageView(LoginRequiredMixin, DetailView):
     template_name = "ftp_deploy/service/manage.html"
 
     def get_context_data(self, **kwargs):
-
         context = super(ServiceManageView, self).get_context_data(**kwargs)
         context['recent_logs'] = self.object.log_set.all()[:15]
         context['fail_logs'] = self.object.log_set.filter(status=0).filter(skip=0)
@@ -62,6 +61,7 @@ class ServiceAddView(LoginRequiredMixin, CreateView):
     template_name = "ftp_deploy/service/form.html"
 
     def form_valid(self, form):
+        self.object.check()
         messages.add_message(self.request, messages.SUCCESS, 'Service has been added.')
         return super(ServiceAddView, self).form_valid(form)
 
@@ -77,6 +77,7 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        self.object.check()
         messages.add_message(self.request, messages.SUCCESS, 'Service has been updated.')
         return super(ServiceEditView, self).form_valid(form)
 
@@ -102,6 +103,7 @@ class ServiceStatusView(JSONResponseMixin, LoginRequiredMixin, SingleObjectMixin
 
     def post(self, request, *args, **kwargs):
         service = self.get_object()
+        service.check()
         service.save()
         response = request.POST.get('response', '')
 

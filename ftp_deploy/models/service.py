@@ -24,16 +24,12 @@ class Service(models.Model):
 
     secret_key = models.CharField('Secret Key', unique=True, max_length=30, default=lambda: ''.join(random.choice(string.letters + string.digits) for x in range(30)))
 
-    status = models.BooleanField()
+    status = models.BooleanField(default=True)
     status_message = models.TextField()
     notification = models.ForeignKey(Notification, null=True, blank=True, on_delete=models.SET_NULL)
     lock = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
-    def __init__(self, *args, **kwargs):
-        self.check = True
-        return super(Service, self).__init__(*args, **kwargs)
 
     def __unicode__(self):
         return self.repo_name
@@ -56,26 +52,22 @@ class Service(models.Model):
     def hook_url(self):
         return reverse('ftpdeploy_deploy', kwargs={'secret_key': self.secret_key})
 
-    def save(self, **kwargs):
-        """Check service status on save"""
+    def check(self, **kwargs):
 
-        if self.check:
-            message = list()
-            fails, message = service_check(self).check_all()
+        message = list()
+        fails, message = service_check(self).check_all()
 
-            if fails[2]:
-                self.repo_hook = False
-            else:
-                self.repo_hook = True
+        if fails[2]:
+            self.repo_hook = False
+        else:
+            self.repo_hook = True
 
-            if True in fails:
-                self.status_message = '<br>'.join(message)
-                self.status = False
-            else:
-                self.status = True
-                self.status_message = ''
-
-        super(Service, self).save()
+        if True in fails:
+            self.status_message = '<br>'.join(message)
+            self.status = False
+        else:
+            self.status = True
+            self.status_message = ''
 
     class Meta:
         app_label = 'ftp_deploy'
