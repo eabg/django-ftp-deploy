@@ -60,7 +60,6 @@ class DeployView(View):
                 if self.service.lock:
                     raise LockError()
 
-                self.service.check = False
                 self.service.lock = True
                 self.service.save()
 
@@ -112,7 +111,7 @@ class DeployView(View):
             finally:
                 self.ftp.quit()
                 self.service.lock = False
-                self.service.check = True
+                self.service.check()
                 self.service.save()
 
         return HttpResponse(status=self.status)
