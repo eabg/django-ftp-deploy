@@ -52,6 +52,12 @@ class Service(models.Model):
     def hook_url(self):
         return reverse('ftpdeploy_deploy', kwargs={'secret_key': self.secret_key})
 
+    def get_logs_tree(self):
+        """get logs tree for restore deploys. Include all logs since first fail apart of skiped."""
+        first_fail_log = self.log_set.filter(status=0).filter(skip=0).order_by('pk')[:1]
+        logs = self.log_set.filter(skip=0).filter(pk__gte=first_fail_log[0].pk).order_by('pk')
+        return logs
+
     def check(self, **kwargs):
 
         message = list()

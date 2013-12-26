@@ -57,13 +57,17 @@ class ServiceAddView(LoginRequiredMixin, CreateView):
     """View for add serives"""
     model = Service
     form_class = ServiceForm
-    success_url = reverse_lazy('ftpdeploy_dashboard')
     template_name = "ftp_deploy/service/form.html"
 
     def form_valid(self, form):
-        self.object.check()
         messages.add_message(self.request, messages.SUCCESS, 'Service has been added.')
         return super(ServiceAddView, self).form_valid(form)
+
+    def get_success_url(self):
+        self.object.check()
+        self.object.save()
+        """mock unittest fix int(self.object.pk)"""
+        return reverse('ftpdeploy_service_manage', kwargs={'pk': self.object.pk})
 
 
 class ServiceEditView(LoginRequiredMixin, UpdateView):
@@ -73,13 +77,13 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
     form_class = ServiceForm
     template_name = "ftp_deploy/service/form.html"
 
-    def get_success_url(self):
-        return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
-
     def form_valid(self, form):
         self.object.check()
         messages.add_message(self.request, messages.SUCCESS, 'Service has been updated.')
-        return super(ServiceEditView, self).form_valid(form)
+        self.get_success_url()
+
+    def get_success_url(self):
+        return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
 
 
 class ServiceDeleteView(LoginRequiredMixin, DeleteView):
@@ -108,14 +112,13 @@ class ServiceStatusView(JSONResponseMixin, LoginRequiredMixin, SingleObjectMixin
         response = request.POST.get('response', '')
 
         if response == 'list':
-            services = list()
-            services.append(service)
+            services = [service]
             return render_to_response('ftp_deploy/service/list.html', locals(), context_instance=RequestContext(request))
 
         if response == 'manage':
             recent_logs = service.log_set.all()[:15]
             fail_logs = service.log_set.filter(status=0).filter(skip=0)
-            return render_to_response('ftp_deploy/service/manage.html', locals(), context_instance=RequestContext(request))
+            return render_to_response('ftp_deploy/service/manage.html', {'service': service, 'recent_logs': recent_logs, 'fail_logs': fail_logs}, context_instance=RequestContext(request))
 
         if response == 'json':
             context = {
@@ -139,11 +142,12 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceRestoreView, self).get_context_data(**kwargs)
 
-        logs = self.get_logs_tree()
+        service = self.get_object()
+        logs = service.get_logs_tree()
 
         context['payload'] = json.loads(logs[0].payload)
         context['payload']['user'] = 'Restore'
-        context['service'] = self.get_object()
+        context['service'] = service
 
         commits = list()
         for log in logs:
@@ -165,11 +169,7 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
 
         return HttpResponse(reverse('ftpdeploy_deploy', args=(self.get_object().secret_key,)))
 
-    def get_logs_tree(self):
-        """get logs tree for restore deploys. Include all logs since first fail apart of skiped."""
-        first_fail_log = self.get_object().log_set.filter(status=0).filter(skip=0).order_by('pk')[:1]
-        logs = self.get_object().log_set.filter(skip=0).filter(pk__gte=first_fail_log[0].pk).order_by('pk')
-        return logs
+    
 
 
 class ServiceNotificationView(LoginRequiredMixin,  UpdateView):
@@ -178,58 +178,9 @@ class ServiceNotificationView(LoginRequiredMixin,  UpdateView):
     form_class = ServiceNotificationForm
     template_name = "ftp_deploy/notification/notification-modal.html"
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, 'Service notification has been updated.')
+        self.get_success_url()
+
     def get_success_url(self):
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
-
-    def form_valid(self, form):
-        self.object.check = False
-        messages.add_message(self.request, messages.SUCCESS, 'Service notification has been updated.')
-        return super(ServiceNotificationView, self).form_valid(form)
-
-
-class BitbucketAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View):
-
-    """View for managing BitBucket API"""
-
-    model = Service
-
-    def dispatch(self, *args, **kwargs):
-        self.bitbucket_username = BITBUCKET_SETTINGS['username']
-        self.bitbucket_password = BITBUCKET_SETTINGS['password']
-        return super(BitbucketAPIView, self).dispatch(*args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            curl = curl_connection(self.bitbucket_username, self.bitbucket_password)
-            curl.authenticate()
-            post = str()
-
-            if self.request.POST['data'] == 'respositories':
-                context = self.repositories(curl)
-            elif self.request.POST['data'] == 'addhook':
-                context = self.add_hook(curl, request)
-
-            return self.render_json_response(context)
-
-        finally:
-            curl.close()
-
-        return HttpResponse()
-
-    def repositories(self, curl):
-        """Load list of repositories from bitbucket account"""
-
-        url = 'https://bitbucket.org/api/1.0/user/repositories'
-        context = curl.perform(url)
-        return context
-
-    def add_hook(self, curl, request):
-        """Add hook and change repo_hook flag for service"""
-
-        service = self.get_object()
-        url = 'https://api.bitbucket.org/1.0/repositories/%s/%s/services/ ' % (self.bitbucket_username, self.get_object().repo_slug_name)
-        post = 'type=POST&URL=%s%s' % (absolute_url(request).build(), service.hook_url())
-        service.repo_hook = True
-        service.save()
-        context = curl.perform_post(url, post)
-        return context
