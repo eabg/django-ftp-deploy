@@ -1,10 +1,10 @@
 from django.contrib import admin
 
 from .models import Log, Service, Notification
-from ftp_deploy.server.forms import NotificationForm
+from ftp_deploy.server.forms import NotificationForm, ServiceForm
 
 class ServiceAdmin(admin.ModelAdmin):
-
+    form = ServiceForm
     list_display = ('repo_name', 'repo_branch', 'hook_url', 'status_message_html', 'status')
     fieldsets = (
         ('FTP Settings', {

@@ -50,6 +50,12 @@ class ServiceForm(forms.ModelForm):
 
         )
 
+    def clean_ftp_path(self):
+        data = self.cleaned_data['ftp_path']
+        if not data.endswith('/'):
+            data = '%s/' % data
+        return data
+
     class Meta:
         model = Service
         exclude = ['status', 'status_date', 'status_message']
