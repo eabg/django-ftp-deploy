@@ -14,6 +14,10 @@ class ServiceAdmin(admin.ModelAdmin):
             'classes': ('',),
             'fields': ('repo_source', 'repo_name', 'repo_branch')
         }),
+        ('Notification', {
+            'classes': ('',),
+            'fields': ('notification',)
+        }),
         ('Security', {
             'classes': ('collapse',),
             'fields': ('secret_key',)
