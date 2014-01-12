@@ -249,8 +249,8 @@ In order to see logs page you need to click ``Log`` button on the top of the pag
 
   /ftpdeploy/log
 
-Logs provide information about all activity on the FTP Deploy application. 
+Logs provide information about all activity in the FTP Deploy application. 
 
-In addition log list contain information about number of commits included in deploy. If you need to see more details about included commits, you can click the ``commits number`` to display more informations (commit message, commit user, raw node).
+In addition log list contain information about number of commits included in deploy. If you need to see more details about included commits, you can click the ``commits number`` (commit message, commit user, raw node).
 
 

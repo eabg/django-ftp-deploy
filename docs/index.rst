@@ -70,7 +70,6 @@ Roadmap
 * Cron validation
 * FTP password encryption
 * Advanced statistics
-* Full UnitTest and FunctionalTest cover
 
   
 

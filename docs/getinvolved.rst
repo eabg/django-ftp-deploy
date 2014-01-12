@@ -19,11 +19,11 @@ Introduction
 
 
 3. Install application as described in :ref:`installation <installation>` section.
-4. Install all requirements for developing module. In order to do this, go to root directory of unziped file, and run::
+4. Install all requirements for developing module. Go to root directory of unziped files and use pip::
    
      pip install -r requirements/dev.txt
 
-5. Add ``FTP_TEST_SETTINGS`` configuration to your settings (testing purposes only)
+5. Add ``FTP_TEST_SETTINGS`` configuration to your settings
    
    .. code-block:: python
 
@@ -49,10 +49,9 @@ Introduction
 Testing
 =======
 
-Application use `Nose <https://nose.readthedocs.org/en/latest/>`_ and  `Fabric <http://docs.fabfile.org/en/1.8/>`_ libraries to automate testing process. 
-For tests coverage statistics use `Coverage <https://pypi.python.org/pypi/coverage>`_ library.
+Application use `Nose <https://nose.readthedocs.org/en/latest/>`_ as test runner and  `Fabric <http://docs.fabfile.org/en/1.8/>`_ library to automate testing process. 
 
-In order to run tests go into *ftp_deploy/tests* directory and then run:
+In order to run tests go into *ftp_deploy/tests* directory and then:
 
 
 * *all* tests::
@@ -71,6 +70,7 @@ In order to run tests go into *ftp_deploy/tests* directory and then run:
 
    fab testi
 
-* *Extarnal Tests* only (FTP, Repository etc.)::
 
-   fab teste
+*Unit Tests* and *Integration Tests* accepts **module** attibute to specify module to test::
+
+   fab testu:module_name

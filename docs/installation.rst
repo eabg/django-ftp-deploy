@@ -14,9 +14,8 @@ Required third party libraries are **installed automatically** if you use pip to
 1.  Django >= 1.5
 2. `pycurl <https://pypi.python.org/pypi/pycurl>`_
 3. `certifi <https://pypi.python.org/pypi/certifi>`_
-4. `south <https://pypi.python.org/pypi/South/>`_
-5. `django_braces <https://pypi.python.org/pypi/django-braces>`_
-6. `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
+4. `django_braces <https://pypi.python.org/pypi/django-braces>`_
+5. `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
 
 
 

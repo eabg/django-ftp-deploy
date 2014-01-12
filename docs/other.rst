@@ -21,9 +21,11 @@ All screens are only for preview purposes, and may be different then original ap
  
 .. image:: images/manage.png
 
-3. Restore
+3. Notifications
   
-.. image:: images/restore.png
+.. image:: images/notifications.png
+
+.. image:: images/notifications1.png
 
 4. Log
   

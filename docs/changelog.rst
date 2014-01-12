@@ -5,6 +5,17 @@ Changelog
 
 Changelog for django-ftp-deploy module
 
+v1.2.1
+------
+
+* unit and integration tests development
+* templates and style updates
+* 'skip deploy' bug fix
+* notification in service admin(django) page
+* code updates
+* PEP8 updates
+* documentation updates
+
 v1.2
 ----
 
