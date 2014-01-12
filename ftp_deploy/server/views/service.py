@@ -5,11 +5,11 @@ from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from django.views.generic.detail import SingleObjectMixin, SingleObjectTemplateResponseMixin
 from django.views.generic import ListView, UpdateView, DeleteView, DetailView, CreateView, FormView
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.contrib import messages
 from django.db.models import Max
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 from braces.views import JSONResponseMixin, LoginRequiredMixin
 
@@ -66,7 +66,6 @@ class ServiceAddView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         self.object.check()
         self.object.save()
-        """mock unittest fix int(self.object.pk)"""
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.object.pk})
 
 
@@ -79,8 +78,9 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object.check()
+        self.object.save()
         messages.add_message(self.request, messages.SUCCESS, 'Service has been updated.')
-        self.get_success_url()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
@@ -116,9 +116,10 @@ class ServiceStatusView(JSONResponseMixin, LoginRequiredMixin, SingleObjectMixin
             return render_to_response('ftp_deploy/service/list.html', locals(), context_instance=RequestContext(request))
 
         if response == 'manage':
-            recent_logs = service.log_set.all()[:15]
-            fail_logs = service.log_set.filter(status=0).filter(skip=0)
-            return render_to_response('ftp_deploy/service/manage.html', {'service': service, 'recent_logs': recent_logs, 'fail_logs': fail_logs}, context_instance=RequestContext(request))
+            manage_view = ServiceManageView()
+            manage_view.object = service
+            context = manage_view.get_context_data()
+            return render_to_response('ftp_deploy/service/manage.html', context, context_instance=RequestContext(request))
 
         if response == 'json':
             context = {
@@ -145,7 +146,9 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         service = self.get_object()
         logs = service.get_logs_tree()
 
+        # init payload dictionary
         context['payload'] = json.loads(logs[0].payload)
+
         context['payload']['user'] = 'Restore'
         context['service'] = service
 
@@ -163,13 +166,10 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-
         if request.POST['payload']:
-            self.get_logs_tree().delete()
+            self.get_object().get_logs_tree().delete()
 
-        return HttpResponse(reverse('ftpdeploy_deploy', args=(self.get_object().secret_key,)))
-
-    
+        return HttpResponse(reverse('ftpdeploy_deploy', kwargs={'secret_key':self.get_object().secret_key}))
 
 
 class ServiceNotificationView(LoginRequiredMixin,  UpdateView):
@@ -180,7 +180,7 @@ class ServiceNotificationView(LoginRequiredMixin,  UpdateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, 'Service notification has been updated.')
-        self.get_success_url()
+        return super(ServiceNotificationView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('ftpdeploy_service_manage', kwargs={'pk': self.kwargs['pk']})
