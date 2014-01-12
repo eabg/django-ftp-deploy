@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as login_user
+from django.contrib.auth import logout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import FormView, View
@@ -26,11 +28,10 @@ class loginView(FormView):
         password = form.cleaned_data['password']
         user = authenticate(username=username, password=password)
         if user is not None:
-            login(self.request, user)
+            login_user(self.request, user)
         else:
             messages.error(self.request, 'Username or Password incorrect.')
             return HttpResponseRedirect(reverse('ftpdeploy_login'))
-
         return super(loginView, self).form_valid(form)
 
 
