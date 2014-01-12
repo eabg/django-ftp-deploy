@@ -121,6 +121,5 @@ class DeployView(View):
         self.log.status_message = message
         self.log.status = False
         self.log.save()
-        self.service.status = False
         self.status = 500
         notification_fail(absolute_url(request).build(), self.service, self.json_string, message)
