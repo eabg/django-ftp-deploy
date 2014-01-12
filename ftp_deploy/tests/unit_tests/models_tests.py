@@ -1,19 +1,19 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from ftp_deploy.tests.utils.factories import ServiceFactory
-from ftp_deploy.tests.utils.factories import NotificationFactory
-from ftp_deploy.tests.utils.factories import LogFactory
+from mock import MagicMock
+from mock import PropertyMock
+from mock import patch
+from mock import call
 
+from ftp_deploy.tests.utils.factories import ServiceFactory,NotificationFactory, LogFactory
 from ftp_deploy.models import Log
 
 
 class ServiceTest(TestCase):
 
     def setUp(self):
-        self.service = ServiceFactory.build()
-        self.service.check = False
-        self.service.save()
+        self.service = ServiceFactory()
 
     def test_service_deploy_method(self):
         """service deploy method return number of related logs"""
@@ -64,13 +64,38 @@ class ServiceTest(TestCase):
         """service hook_url method return hook url for appropriate repository"""
         self.assertEqual(self.service.hook_url(), reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service.secret_key}))
 
+    def test_service_get_logs_tree_method(self):
+        """service get_logs_tree method return logs in proper order and omit skipped"""
+        log1 = LogFactory(service=self.service)
+        log2 = LogFactory(service=self.service, status=False, skip=True)
+        log3 = LogFactory(service=self.service)
+        log4 = LogFactory(service=self.service, status=False)
+        log5 = LogFactory(service=self.service)
+        log6 = LogFactory(service=self.service, status=False, skip=True)
+        log7 = LogFactory(service=self.service)
+
+        self.assertListEqual(list(self.service.get_logs_tree()), [log3, log4, log5, log7])
+
+    @patch('ftp_deploy.models.service.service_check')
+    def test_service_check_method(self, mock_service_check):
+        """service check method perform check, set repo_hook and status_message"""
+        mock_service_check().check_all = MagicMock('check_all', return_value=([True, True, True], ['message1', 'message2']))
+        self.service.check()
+
+        mock_service_check().check_all.assert_called_once_with()
+        self.assertEqual(self.service.status_message, 'message1<br>message2')
+        self.assertFalse(self.service.repo_hook)
+
+        mock_service_check().check_all = MagicMock('check_all', return_value=([False, False, False], []))
+        self.service.check()
+        self.assertEqual(self.service.status_message, '')
+        self.assertTrue(self.service.repo_hook)
+
 
 class LogTest(TestCase):
 
     def setUp(self):
-        self.service = ServiceFactory.build()
-        self.service.check = False
-        self.service.save()
+        self.service = ServiceFactory()
 
     def test_commits_info_method(self):
         """log commits_info method return commits information in format [[message,username,raw_node],]"""
@@ -87,8 +112,8 @@ class NotificationTest(TestCase):
 
     def test_notification_get_email_list_method(self):
         """
-        notification get_email_list methos return email list in format 
-        {{'email1@email.com': {'success': True}, 'email2@email.com': {'success': True}, 
+        notification get_email_list methos return email list in format
+        {{'email1@email.com': {'success': True}, 'email2@email.com': {'success': True},
             'email1@email.com': {'fail': True}, 'email2@email.com': {'fail': True}}}
         """
         success = self.notification.get_success()

@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">ftp_deploy.server.views.notification</span>:
     38 total statements,
-    <span class="warning">68.8% covered</span>
+    <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/server/views/notification.py</p>
   <p>
     Stats:
-    <span class="executed">22 executed</span>,
-    <span class="missed">10 missed</span>,
+    <span class="executed">32 executed</span>,
+    <span class="missed">0 missed</span>,
     <span class="excluded">6 excluded</span>,
     <span class="ignored">24 ignored</span> 
   </p> 
@@ -170,8 +170,8 @@
 <li class="executed"><code>    template_name = "ftp_deploy/notification/form.html"</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def form_valid(self, form):</code></li>
-<li class="missed"><code>        messages.add_message(self.request, messages.SUCCESS, 'Notification has been added.')</code></li>
-<li class="missed"><code>        return super(NotificationAddView, self).form_valid(form)</code></li>
+<li class="executed"><code>        messages.add_message(self.request, messages.SUCCESS, 'Notification has been added.')</code></li>
+<li class="executed"><code>        return super(NotificationAddView, self).form_valid(form)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>class NotificationEditView(LoginRequiredMixin, UpdateView):</code></li>
@@ -184,14 +184,14 @@
 <li class="executed"><code>    template_name = "ftp_deploy/notification/form.html"</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def get_context_data(self, **kwargs):</code></li>
-<li class="missed"><code>        context = super(NotificationEditView, self).get_context_data(**kwargs)</code></li>
-<li class="missed"><code>        emails = self.get_object().get_email_list()</code></li>
-<li class="missed"><code>        context['emails'] = emails</code></li>
-<li class="missed"><code>        return context</code></li>
+<li class="executed"><code>        context = super(NotificationEditView, self).get_context_data(**kwargs)</code></li>
+<li class="executed"><code>        emails = self.get_object().get_email_list()</code></li>
+<li class="executed"><code>        context['emails'] = emails</code></li>
+<li class="executed"><code>        return context</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def form_valid(self, form):</code></li>
-<li class="missed"><code>        messages.add_message(self.request, messages.SUCCESS, 'Notification has been updated.')</code></li>
-<li class="missed"><code>        return super(NotificationEditView, self).form_valid(form)</code></li>
+<li class="executed"><code>        messages.add_message(self.request, messages.SUCCESS, 'Notification has been updated.')</code></li>
+<li class="executed"><code>        return super(NotificationEditView, self).form_valid(form)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>class NotificationDeleteView(LoginRequiredMixin, DeleteView):</code></li>
@@ -203,8 +203,8 @@
 <li class="executed"><code>    template_name = "ftp_deploy/notification/delete.html"</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def delete(self, request, *args, **kwargs):</code></li>
-<li class="missed"><code>        messages.add_message(request, messages.SUCCESS, 'Notification has been removed.')</code></li>
-<li class="missed"><code>        return super(NotificationDeleteView, self).delete(request, *args, **kwargs)</code></li>
+<li class="executed"><code>        messages.add_message(request, messages.SUCCESS, 'Notification has been removed.')</code></li>
+<li class="executed"><code>        return super(NotificationDeleteView, self).delete(request, *args, **kwargs)</code></li>
   </ol>
 </div>
 

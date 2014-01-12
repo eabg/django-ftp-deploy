@@ -128,16 +128,16 @@
   <h1>
     <span id="module-name">ftp_deploy.utils.ftp</span>:
     54 total statements,
-    <span class="critical">23.5% covered</span>
+    <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/utils/ftp.py</p>
   <p>
     Stats:
-    <span class="executed">12 executed</span>,
-    <span class="missed">39 missed</span>,
+    <span class="executed">51 executed</span>,
+    <span class="missed">0 missed</span>,
     <span class="excluded">3 excluded</span>,
-    <span class="ignored">30 ignored</span> 
+    <span class="ignored">29 ignored</span> 
   </p> 
 </div>
 
@@ -152,54 +152,53 @@
 <li class="executed"><code>class ftp_connection(object):</code></li>
 <li class="ignored"><code>    """FTP Connection helper. Provide methods to manage ftp resources"""</code></li>
 <li class="executed"><code>    def __init__(self, host, username, password, ftp_path):</code></li>
-<li class="missed"><code>        self.host = host</code></li>
-<li class="missed"><code>        self.username = username</code></li>
-<li class="missed"><code>        self.password = password</code></li>
-<li class="missed"><code>        self.ftp_path = self.encode(ftp_path)</code></li>
-<li class="missed"><code>        self.connected = 0</code></li>
+<li class="executed"><code>        self.host = host</code></li>
+<li class="executed"><code>        self.username = username</code></li>
+<li class="executed"><code>        self.password = password</code></li>
+<li class="executed"><code>        self.ftp_path = self.encode(ftp_path)</code></li>
+<li class="executed"><code>        self.connected = 0</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def connect(self):</code></li>
 <li class="ignored"><code>        """Initialize FTP Connection"""</code></li>
-<li class="missed"><code>        self.ftp = FTP(self.host)</code></li>
-<li class="missed"><code>        self.ftp.login(self.username, self.password)</code></li>
-<li class="missed"><code>        self.connected = 1</code></li>
+<li class="executed"><code>        self.ftp = FTP(self.host)</code></li>
+<li class="executed"><code>        self.ftp.login(self.username, self.password)</code></li>
+<li class="executed"><code>        self.connected = 1</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def create_file(self, file_path, content):</code></li>
 <li class="ignored"><code>        """Create file populated with 'content' and save to 'file_path' location"""</code></li>
-<li class="missed"><code>        file_path = self.encode(file_path)</code></li>
-<li class="missed"><code>        self.ftp.storbinary('STOR ' + self.ftp_path + file_path, content)</code></li>
+<li class="executed"><code>        file_path = self.encode(file_path)</code></li>
+<li class="executed"><code>        self.ftp.storbinary('STOR ' + self.ftp_path + file_path, content)</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def remove_file(self, file_path):</code></li>
 <li class="ignored"><code>        """Remove file from 'file_path' location, and clear empty directories"""</code></li>
-<li class="missed"><code>        file_path = self.encode(file_path)</code></li>
-<li class="missed"><code>        self.ftp.delete(self.ftp_path + file_path)</code></li>
-<li class="ignored"><code></code></li>
-<li class="missed"><code>        dirname = file_path.split(os.sep)</code></li>
-<li class="missed"><code>        for i in xrange(len(dirname)):</code></li>
-<li class="missed"><code>            current = os.sep.join(dirname[:-1 - i])</code></li>
-<li class="missed"><code>            try:</code></li>
-<li class="missed"><code>                self.ftp.rmd(self.ftp_path + current)</code></li>
-<li class="missed"><code>            except Exception, e:</code></li>
-<li class="missed"><code>                return False</code></li>
+<li class="executed"><code>        file_path = self.encode(file_path)</code></li>
+<li class="executed"><code>        self.ftp.delete(self.ftp_path + file_path)</code></li>
+<li class="executed"><code>        dirname = file_path.split('/')</code></li>
+<li class="executed"><code>        for i in xrange(len(dirname)):</code></li>
+<li class="executed"><code>            current = '/'.join(dirname[:-1 - i])</code></li>
+<li class="executed"><code>            try:</code></li>
+<li class="executed"><code>                self.ftp.rmd(self.ftp_path + current)</code></li>
+<li class="executed"><code>            except Exception, e:</code></li>
+<li class="executed"><code>                return False</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def make_dirs(self, file_path):</code></li>
 <li class="ignored"><code>        """ Create FTP tree directories based on 'file_path'"""</code></li>
-<li class="missed"><code>        file_path = self.encode(file_path)</code></li>
-<li class="missed"><code>        dirname = os.path.dirname(file_path).split(os.sep)</code></li>
-<li class="missed"><code>        for i in xrange(len(dirname)):</code></li>
-<li class="missed"><code>            current = os.sep.join(dirname[:i + 1])</code></li>
-<li class="missed"><code>            try:</code></li>
-<li class="missed"><code>                self.ftp.dir(self.ftp_path + current)</code></li>
-<li class="missed"><code>            except Exception, e:</code></li>
-<li class="missed"><code>                self.ftp.mkd(self.ftp_path + current)</code></li>
+<li class="executed"><code>        file_path = self.encode(file_path)</code></li>
+<li class="executed"><code>        dirname = os.path.dirname(file_path).split('/')</code></li>
+<li class="executed"><code>        for i in xrange(len(dirname)):</code></li>
+<li class="executed"><code>            current = '/'.join(dirname[:i + 1])</code></li>
+<li class="executed"><code>            try:</code></li>
+<li class="executed"><code>                self.ftp.dir(self.ftp_path + current)</code></li>
+<li class="executed"><code>            except Exception, e:</code></li>
+<li class="executed"><code>                self.ftp.mkd(self.ftp_path + current)</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def encode(self, content):</code></li>
 <li class="ignored"><code>        """Encode path string"""</code></li>
-<li class="missed"><code>        return str(content).encode('ascii', 'ignore')</code></li>
+<li class="executed"><code>        return str(content).encode('ascii', 'ignore')</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def quit(self):</code></li>
 <li class="ignored"><code>        """Close FTP Connection"""</code></li>
-<li class="missed"><code>        return self.ftp.quit() if self.connected else False</code></li>
+<li class="executed"><code>        return self.ftp.quit() if self.connected else False</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>class ftp_check(ftp_connection):</code></li>
@@ -208,24 +207,24 @@
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('FTP')</code></li>
 <li class="ignored"><code>    def check_ftp_login(self):</code></li>
-<li class="missed"><code>        self.connect()</code></li>
+<li class="executed"><code>        self.connect()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('FTP')</code></li>
 <li class="ignored"><code>    def check_ftp_path(self):</code></li>
-<li class="missed"><code>        self.ftp.cwd(self.ftp_path)</code></li>
-<li class="missed"><code>        self.ftp.cwd('/')</code></li>
+<li class="executed"><code>        self.ftp.cwd(self.ftp_path)</code></li>
+<li class="executed"><code>        self.ftp.cwd('/')</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_all(self):</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        status = self.check_ftp_login()</code></li>
-<li class="missed"><code>        if status[0] == True:</code></li>
-<li class="missed"><code>            return status</code></li>
+<li class="executed"><code>        status = self.check_ftp_login()</code></li>
+<li class="executed"><code>        if status[0] == True:</code></li>
+<li class="executed"><code>            return status</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        status = self.check_ftp_path()</code></li>
-<li class="missed"><code>        if status[0] == True:</code></li>
-<li class="missed"><code>            return status</code></li>
+<li class="executed"><code>        status = self.check_ftp_path()</code></li>
+<li class="executed"><code>        if status[0] == True:</code></li>
+<li class="executed"><code>            return status</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        return False, ''</code></li>
+<li class="executed"><code>        return False, ''</code></li>
 <li class="ignored"><code></code></li>
   </ol>
 </div>

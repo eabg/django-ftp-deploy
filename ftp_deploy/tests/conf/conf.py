@@ -1,7 +1,12 @@
 from os.path import abspath, basename, dirname, join, normpath
 from os.path import join
 
+import logging
+selenium_logger = logging.getLogger('selenium.webdriver.remote.remote_connection')
+selenium_logger.setLevel(logging.ERROR)
+
 from service.settings import *
+
 
 DATABASES = {
     "default": {

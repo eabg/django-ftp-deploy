@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">ftp_deploy.utils.curl</span>:
     25 total statements,
-    <span class="critical">31.8% covered</span>
+    <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/utils/curl.py</p>
   <p>
     Stats:
-    <span class="executed">7 executed</span>,
-    <span class="missed">15 missed</span>,
+    <span class="executed">22 executed</span>,
+    <span class="missed">0 missed</span>,
     <span class="excluded">3 excluded</span>,
     <span class="ignored">15 ignored</span> 
   </p> 
@@ -153,36 +153,36 @@
 <li class="ignored"><code>    """Helper for curl connections"""</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def __init__(self, username, password):</code></li>
-<li class="missed"><code>        self.username = username</code></li>
-<li class="missed"><code>        self.password = password</code></li>
+<li class="executed"><code>        self.username = username</code></li>
+<li class="executed"><code>        self.password = password</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def authenticate(self):</code></li>
 <li class="ignored"><code>        """Authenticate curl connection"""</code></li>
-<li class="missed"><code>        self.curl = pycurl.Curl()</code></li>
-<li class="missed"><code>        self.curl.setopt(pycurl.CAINFO, certifi.where())</code></li>
-<li class="missed"><code>        self.curl.setopt(self.curl.USERPWD, '%s:%s' % (self.username, self.password))</code></li>
+<li class="executed"><code>        self.curl = pycurl.Curl()</code></li>
+<li class="executed"><code>        self.curl.setopt(pycurl.CAINFO, certifi.where())</code></li>
+<li class="executed"><code>        self.curl.setopt(self.curl.USERPWD, '%s:%s' % (self.username, self.password))</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def perform(self, url):</code></li>
 <li class="ignored"><code>        """Perform get request and return respond value"""</code></li>
-<li class="missed"><code>        b = StringIO.StringIO()</code></li>
-<li class="missed"><code>        self.curl.setopt(self.curl.URL, str(url))</code></li>
-<li class="missed"><code>        self.curl.setopt(self.curl.WRITEFUNCTION, b.write)</code></li>
-<li class="missed"><code>        self.curl.perform()</code></li>
-<li class="missed"><code>        return b.getvalue()</code></li>
+<li class="executed"><code>        b = StringIO.StringIO()</code></li>
+<li class="executed"><code>        self.curl.setopt(self.curl.URL, str(url))</code></li>
+<li class="executed"><code>        self.curl.setopt(self.curl.WRITEFUNCTION, b.write)</code></li>
+<li class="executed"><code>        self.curl.perform()</code></li>
+<li class="executed"><code>        return b.getvalue()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def perform_post(self, url, post):</code></li>
 <li class="ignored"><code>        """Perform post request"""</code></li>
-<li class="missed"><code>        self.curl.setopt(self.curl.URL, str(url))</code></li>
-<li class="missed"><code>        self.curl.setopt(self.curl.POSTFIELDS, post)</code></li>
-<li class="missed"><code>        self.curl.perform()</code></li>
+<li class="executed"><code>        self.curl.setopt(self.curl.URL, str(url))</code></li>
+<li class="executed"><code>        self.curl.setopt(self.curl.POSTFIELDS, post)</code></li>
+<li class="executed"><code>        self.curl.perform()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def get_http_code(self):</code></li>
 <li class="ignored"><code>        """Return curl HTTP Code"""</code></li>
-<li class="missed"><code>        return self.curl.getinfo(pycurl.HTTP_CODE)</code></li>
+<li class="executed"><code>        return self.curl.getinfo(pycurl.HTTP_CODE)</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def close(self):</code></li>
 <li class="ignored"><code>        """Close curl connection"""</code></li>
-<li class="missed"><code>        self.curl.close()</code></li>
+<li class="executed"><code>        self.curl.close()</code></li>
   </ol>
 </div>
 

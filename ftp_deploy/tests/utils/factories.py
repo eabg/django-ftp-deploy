@@ -30,12 +30,12 @@ class ServiceFactory(factory.DjangoModelFactory):
     ftp_host = 'ftp_host'
     ftp_username = 'ftp_username'
     ftp_password = 'ftp_password'
-    ftp_path = ''
+    ftp_path = 'ftp/path'
 
     repo_source = 'bb'
-    repo_name = 'repo_name'
-    repo_slug_name = 'repo_name'
-    repo_branch = 'repo_branch'
+    repo_name = factory.Sequence(lambda n: 'repo_name_%d' % n)
+    repo_slug_name = repo_name
+    repo_branch = 'master'
     repo_hook = True
 
     status = True
@@ -59,7 +59,7 @@ class LogFactory(factory.DjangoModelFactory):
 
     @factory.sequence
     def payload(n):
-        with open('%s/payload.txt' % os.path.dirname(__file__), 'r') as content_file:
+        with open('%s/payloads/bb_payload.txt' % os.path.dirname(__file__), 'r') as content_file:
             payload = content_file.read()
         return payload
 

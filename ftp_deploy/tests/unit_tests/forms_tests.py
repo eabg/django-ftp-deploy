@@ -1,12 +1,8 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from ftp_deploy.server.forms import LoginForm
-from ftp_deploy.server.forms import NotificationForm
-from ftp_deploy.server.forms import ServiceForm
-from ftp_deploy.server.forms import ServiceNotificationForm
-from ftp_deploy.tests.utils.factories import AdminUserFactory
-from ftp_deploy.tests.utils.factories import ServiceFactory
+from ftp_deploy.server.forms import LoginForm, NotificationForm, ServiceForm, ServiceNotificationForm
+from ftp_deploy.tests.utils.factories import AdminUserFactory, ServiceFactory
 
 
 class LoginFormTest(TestCase):

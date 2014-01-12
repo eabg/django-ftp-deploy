@@ -127,17 +127,17 @@
 <div id="content-header">
   <h1>
     <span id="module-name">ftp_deploy.server.forms.service</span>:
-    33 total statements,
+    38 total statements,
     <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/server/forms/service.py</p>
   <p>
     Stats:
-    <span class="executed">27 executed</span>,
+    <span class="executed">32 executed</span>,
     <span class="missed">0 missed</span>,
     <span class="excluded">6 excluded</span>,
-    <span class="ignored">45 ignored</span> 
+    <span class="ignored">46 ignored</span> 
   </p> 
 </div>
 
@@ -187,13 +187,19 @@
 <li class="ignored"><code>                     ),</code></li>
 <li class="ignored"><code>            Div(</code></li>
 <li class="ignored"><code>                Div(</code></li>
-<li class="ignored"><code>                Submit('save', 'Submit', css_class='pull-right'),</code></li>
+<li class="ignored"><code>                    Submit('save', 'Submit', css_class='pull-right'),</code></li>
 <li class="ignored"><code>                    css_class='col-sm-12'</code></li>
 <li class="ignored"><code>                ),</code></li>
 <li class="ignored"><code>                css_class='row'</code></li>
 <li class="ignored"><code>            )</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>        )</code></li>
+<li class="ignored"><code></code></li>
+<li class="executed"><code>    def clean_ftp_path(self):</code></li>
+<li class="executed"><code>        data = self.cleaned_data['ftp_path']</code></li>
+<li class="executed"><code>        if not data.endswith('/'):</code></li>
+<li class="executed"><code>            data = '%s/' % data</code></li>
+<li class="executed"><code>        return data</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    class Meta:</code></li>
 <li class="executed"><code>        model = Service</code></li>

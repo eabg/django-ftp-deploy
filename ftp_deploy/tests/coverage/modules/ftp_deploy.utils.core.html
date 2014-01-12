@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">ftp_deploy.utils.core</span>:
     76 total statements,
-    <span class="warning">59.4% covered</span>
+    <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/utils/core.py</p>
   <p>
     Stats:
-    <span class="executed">41 executed</span>,
-    <span class="missed">28 missed</span>,
+    <span class="executed">69 executed</span>,
+    <span class="missed">0 missed</span>,
     <span class="excluded">7 excluded</span>,
     <span class="ignored">41 ignored</span> 
   </p> 
@@ -158,49 +158,49 @@
 <li class="ignored"><code>    """Service check class, what group together all checking points. Return 'fails' and 'message' lists"""</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def __init__(self, service):</code></li>
-<li class="missed"><code>        self.service = service</code></li>
-<li class="missed"><code>        self.message = list()</code></li>
-<li class="missed"><code>        self.fails = [False, False, False, False]</code></li>
+<li class="executed"><code>        self.service = service</code></li>
+<li class="executed"><code>        self.message = list()</code></li>
+<li class="executed"><code>        self.fails = [False, False, False, False]</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_log(self):</code></li>
 <li class="ignored"><code>        """Check logs"""</code></li>
-<li class="missed"><code>        if self.service.pk is not None:</code></li>
-<li class="missed"><code>            log_fail = self.service.log_set.all().filter(status=False).filter(skip=False).count()</code></li>
-<li class="missed"><code>            if log_fail:</code></li>
-<li class="missed"><code>                self.message.append('&lt;b&gt;Log&lt;/b&gt;: Deploy Fails(%d)' % log_fail)</code></li>
-<li class="missed"><code>                self.fails[0] = True</code></li>
+<li class="executed"><code>        if self.service.pk is not None:</code></li>
+<li class="executed"><code>            log_fail = self.service.log_set.all().filter(status=False).filter(skip=False).count()</code></li>
+<li class="executed"><code>            if log_fail:</code></li>
+<li class="executed"><code>                self.message.append('&lt;b&gt;Log&lt;/b&gt;: Deploy Fails(%d)' % log_fail)</code></li>
+<li class="executed"><code>                self.fails[0] = True</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_repo(self):</code></li>
 <li class="ignored"><code>        """Check repositories connection, along with POST Hook"""</code></li>
-<li class="missed"><code>        if self.service.repo_source == 'bb':</code></li>
-<li class="missed"><code>            bb = bitbucket_check(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'], self.service)</code></li>
-<li class="missed"><code>            bb_fail, bb_fail_message = bb.check_all()</code></li>
+<li class="executed"><code>        if self.service.repo_source == 'bb':</code></li>
+<li class="executed"><code>            bb = bitbucket_check(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'], self.service)</code></li>
+<li class="executed"><code>            bb_fail, bb_fail_message = bb.check_all()</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>            if bb_fail:</code></li>
-<li class="missed"><code>                self.message.append(bb_fail_message)</code></li>
-<li class="missed"><code>                self.fails[1] = True</code></li>
+<li class="executed"><code>            if bb_fail:</code></li>
+<li class="executed"><code>                self.message.append(bb_fail_message)</code></li>
+<li class="executed"><code>                self.fails[1] = True</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>            hook_fail, hook_fail_message = bb.check_hook_exist()</code></li>
-<li class="missed"><code>            if hook_fail:</code></li>
-<li class="missed"><code>                self.message.append(hook_fail_message)</code></li>
-<li class="missed"><code>                self.fails[2] = True</code></li>
+<li class="executed"><code>            hook_fail, hook_fail_message = bb.check_hook_exist()</code></li>
+<li class="executed"><code>            if hook_fail:</code></li>
+<li class="executed"><code>                self.message.append(hook_fail_message)</code></li>
+<li class="executed"><code>                self.fails[2] = True</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_ftp(self):</code></li>
 <li class="ignored"><code>        """Check FTP connection"""</code></li>
-<li class="missed"><code>        ftp = ftp_check(self.service.ftp_host, self.service.ftp_username, self.service.ftp_password, self.service.ftp_path)</code></li>
-<li class="missed"><code>        ftp_fail, ftp_fail_message = ftp.check_all()</code></li>
-<li class="missed"><code>        ftp.quit()</code></li>
+<li class="executed"><code>        ftp = ftp_check(self.service.ftp_host, self.service.ftp_username, self.service.ftp_password, self.service.ftp_path)</code></li>
+<li class="executed"><code>        ftp_fail, ftp_fail_message = ftp.check_all()</code></li>
+<li class="executed"><code>        ftp.quit()</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        if ftp_fail:</code></li>
-<li class="missed"><code>            self.message.append(ftp_fail_message)</code></li>
-<li class="missed"><code>            self.fails[3] = True</code></li>
+<li class="executed"><code>        if ftp_fail:</code></li>
+<li class="executed"><code>            self.message.append(ftp_fail_message)</code></li>
+<li class="executed"><code>            self.fails[3] = True</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_all(self):</code></li>
-<li class="missed"><code>        self.check_log()</code></li>
-<li class="missed"><code>        self.check_repo()</code></li>
-<li class="missed"><code>        self.check_ftp()</code></li>
+<li class="executed"><code>        self.check_log()</code></li>
+<li class="executed"><code>        self.check_repo()</code></li>
+<li class="executed"><code>        self.check_ftp()</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        return self.fails, self.message</code></li>
+<li class="executed"><code>        return self.fails, self.message</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>class commits_parser(object):</code></li>
@@ -236,7 +236,7 @@
 <li class="executed"><code>                elif file['type'] == 'modified':</code></li>
 <li class="executed"><code>                    modified.append(file['file']) if file['file'] not in modified and file['file'] not in added else False</code></li>
 <li class="executed"><code>                elif file['type'] == 'removed':</code></li>
-<li class="executed"><code>                    removed.append(file['file']) if file['file'] not in removed else False</code></li>
+<li class="executed"><code>                    removed.append(file['file']) if file['file'] not in removed + added else False</code></li>
 <li class="executed"><code>                    added.remove(file['file']) if file['file'] in added else False</code></li>
 <li class="executed"><code>                    modified.remove(file['file']) if file['file'] in modified else False</code></li>
 <li class="ignored"><code></code></li>

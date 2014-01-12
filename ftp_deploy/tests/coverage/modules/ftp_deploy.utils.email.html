@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">ftp_deploy.utils.email</span>:
     91 total statements,
-    <span class="normal">79.8% covered</span>
+    <span class="normal">91.7% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/utils/email.py</p>
   <p>
     Stats:
-    <span class="executed">67 executed</span>,
-    <span class="missed">17 missed</span>,
+    <span class="executed">77 executed</span>,
+    <span class="missed">7 missed</span>,
     <span class="excluded">7 excluded</span>,
     <span class="ignored">50 ignored</span> 
   </p> 
@@ -190,17 +190,17 @@
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def deploy_user(self):</code></li>
 <li class="ignored"><code>        """Method return email of deploy user"""</code></li>
-<li class="missed"><code>        if self.payload['user'] == 'Restore':</code></li>
+<li class="executed"><code>        if self.payload['user'] == 'Restore':</code></li>
 <li class="missed"><code>            return []</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        try:</code></li>
-<li class="missed"><code>            curl = curl_connection(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'])</code></li>
-<li class="missed"><code>            curl.authenticate()</code></li>
-<li class="missed"><code>            url = 'https://bitbucket.org/api/1.0/users/%s/emails' % self.payload['user']</code></li>
-<li class="missed"><code>            context = json.loads(curl.perform(url))</code></li>
+<li class="executed"><code>        try:</code></li>
+<li class="executed"><code>            curl = curl_connection(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'])</code></li>
+<li class="executed"><code>            curl.authenticate()</code></li>
+<li class="executed"><code>            url = 'https://bitbucket.org/api/1.0/users/%s/emails' % self.payload['user']</code></li>
+<li class="executed"><code>            context = json.loads(curl.perform(url))</code></li>
 <li class="missed"><code>            return [context[0]['email']]</code></li>
-<li class="missed"><code>        except Exception, e:</code></li>
-<li class="missed"><code>            return []</code></li>
+<li class="executed"><code>        except Exception, e:</code></li>
+<li class="executed"><code>            return []</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def send(self):</code></li>
 <li class="ignored"><code>        """Sent method process emails from list returned by emails() method"""</code></li>
@@ -232,7 +232,7 @@
 <li class="executed"><code>            emails_list += notifications.get_success()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>            if notifications.deploy_user_success():</code></li>
-<li class="missed"><code>                emails_list += self.deploy_user()</code></li>
+<li class="executed"><code>                emails_list += self.deploy_user()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>            if notifications.commit_user_success():</code></li>
 <li class="executed"><code>                emails_list += commits_parser(self.commits).email_list()</code></li>
@@ -271,7 +271,7 @@
 <li class="executed"><code>            emails_list += notifications.get_fail()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>            if notifications.deploy_user_fail():</code></li>
-<li class="missed"><code>                emails_list += self.deploy_user()</code></li>
+<li class="executed"><code>                emails_list += self.deploy_user()</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>            if notifications.commit_user_fail():</code></li>
 <li class="executed"><code>                emails_list += commits_parser(self.commits).email_list()</code></li>

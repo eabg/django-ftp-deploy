@@ -127,17 +127,17 @@
 <div id="content-header">
   <h1>
     <span id="module-name">ftp_deploy.server.views.login</span>:
-    28 total statements,
+    30 total statements,
     <span class="normal">100.0% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/server/views/login.py</p>
   <p>
     Stats:
     <span class="executed">21 executed</span>,
     <span class="missed">0 missed</span>,
-    <span class="excluded">7 excluded</span>,
-    <span class="ignored">17 ignored</span> 
+    <span class="excluded">9 excluded</span>,
+    <span class="ignored">16 ignored</span> 
   </p> 
 </div>
 
@@ -145,7 +145,9 @@
   <ol>
     <li class="excluded"><code>from django.http import HttpResponseRedirect</code></li>
 <li class="excluded"><code>from django.contrib import messages</code></li>
-<li class="excluded"><code>from django.contrib.auth import authenticate, login, logout</code></li>
+<li class="excluded"><code>from django.contrib.auth import authenticate</code></li>
+<li class="excluded"><code>from django.contrib.auth import login as login_user</code></li>
+<li class="excluded"><code>from django.contrib.auth import logout</code></li>
 <li class="excluded"><code>from django.core.urlresolvers import reverse, reverse_lazy</code></li>
 <li class="excluded"><code>from django.shortcuts import redirect</code></li>
 <li class="excluded"><code>from django.views.generic import FormView, View</code></li>
@@ -171,11 +173,10 @@
 <li class="executed"><code>        password = form.cleaned_data['password']</code></li>
 <li class="executed"><code>        user = authenticate(username=username, password=password)</code></li>
 <li class="executed"><code>        if user is not None:</code></li>
-<li class="executed"><code>            login(self.request, user)</code></li>
+<li class="executed"><code>            login_user(self.request, user)</code></li>
 <li class="ignored"><code>        else:</code></li>
 <li class="executed"><code>            messages.error(self.request, 'Username or Password incorrect.')</code></li>
 <li class="executed"><code>            return HttpResponseRedirect(reverse('ftpdeploy_login'))</code></li>
-<li class="ignored"><code></code></li>
 <li class="executed"><code>        return super(loginView, self).form_valid(form)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>

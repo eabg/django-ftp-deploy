@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">ftp_deploy.utils.repo</span>:
     50 total statements,
-    <span class="critical">15.2% covered</span>
+    <span class="warning">58.7% covered</span>
   </h1>
-  <p>Generated: Thu 2013-12-19 21:13 GMT</p>
+  <p>Generated: Sun 2014-01-12 11:05 GMT</p>
   <p>Source file: /var/www/service.dev/service/ftp_deploy/utils/repo.py</p>
   <p>
     Stats:
-    <span class="executed">7 executed</span>,
-    <span class="missed">39 missed</span>,
+    <span class="executed">27 executed</span>,
+    <span class="missed">19 missed</span>,
     <span class="excluded">4 excluded</span>,
     <span class="ignored">18 ignored</span> 
   </p> 
@@ -154,24 +154,24 @@
 <li class="ignored"><code>    """Bitbucket check class contain all checking points for bitbucket repository, return True if fail"""</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def __init__(self, username, password, service):</code></li>
-<li class="missed"><code>        super(bitbucket_check, self).__init__(username, password)</code></li>
-<li class="missed"><code>        self.service = service</code></li>
+<li class="executed"><code>        super(bitbucket_check, self).__init__(username, password)</code></li>
+<li class="executed"><code>        self.service = service</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('Bitbucket')</code></li>
 <li class="ignored"><code>    def check_authentication(self):</code></li>
-<li class="missed"><code>        self.authenticate()</code></li>
-<li class="missed"><code>        self.perform('https://bitbucket.org/api/1.0/user/repositories')</code></li>
-<li class="missed"><code>        if self.curl.getinfo(pycurl.HTTP_CODE) != 200:</code></li>
+<li class="executed"><code>        self.authenticate()</code></li>
+<li class="executed"><code>        self.perform('https://bitbucket.org/api/1.0/user/repositories')</code></li>
+<li class="executed"><code>        if self.curl.getinfo(pycurl.HTTP_CODE) != 200:</code></li>
 <li class="missed"><code>            raise Exception("Login Fail")</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('Bitbucket')</code></li>
 <li class="ignored"><code>    def check_repo_exist(self):</code></li>
-<li class="missed"><code>        self.authenticate()</code></li>
-<li class="missed"><code>        repos = json.loads(self.perform('https://bitbucket.org/api/1.0/user/repositories'))</code></li>
-<li class="missed"><code>        for repo in repos:</code></li>
-<li class="missed"><code>            if repo['slug'] == self.service.repo_slug_name:</code></li>
+<li class="executed"><code>        self.authenticate()</code></li>
+<li class="executed"><code>        repos = json.loads(self.perform('https://bitbucket.org/api/1.0/user/repositories'))</code></li>
+<li class="executed"><code>        for repo in repos:</code></li>
+<li class="executed"><code>            if repo['slug'] == self.service.repo_slug_name:</code></li>
 <li class="missed"><code>                return False, ''</code></li>
-<li class="missed"><code>        raise Exception("Repository %s doesn't exist" % self.service.repo_slug_name)</code></li>
+<li class="executed"><code>        raise Exception("Repository %s doesn't exist" % self.service.repo_slug_name)</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('Bitbucket')</code></li>
 <li class="ignored"><code>    def check_branch_exist(self):</code></li>
@@ -185,26 +185,26 @@
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    @check('Bitbucket')</code></li>
 <li class="ignored"><code>    def check_hook_exist(self):</code></li>
-<li class="missed"><code>        self.authenticate()</code></li>
-<li class="missed"><code>        url = 'https://bitbucket.org/api/1.0/repositories/%s/%s/services' % (self.username, self.service.repo_slug_name)</code></li>
-<li class="missed"><code>        hooks = json.loads(self.perform(url))</code></li>
+<li class="executed"><code>        self.authenticate()</code></li>
+<li class="executed"><code>        url = 'https://bitbucket.org/api/1.0/repositories/%s/%s/services' % (self.username, self.service.repo_slug_name)</code></li>
+<li class="executed"><code>        hooks = json.loads(self.perform(url))</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        if type(hooks) == list:</code></li>
+<li class="executed"><code>        if type(hooks) == list:</code></li>
 <li class="missed"><code>            for hook in hooks:</code></li>
 <li class="missed"><code>                if len(hook['service']['fields']) &gt; 0:</code></li>
 <li class="missed"><code>                    value = hook['service']['fields'][0]['value']</code></li>
 <li class="missed"><code>                    if value.find(str(self.service.hook_url())) != -1 and hook['service']['type'] == 'POST':</code></li>
 <li class="missed"><code>                        return False, ''</code></li>
-<li class="missed"><code>        raise Exception("Hook is not set up")</code></li>
+<li class="executed"><code>        raise Exception("Hook is not set up")</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def check_all(self):</code></li>
-<li class="missed"><code>        status = self.check_authentication()</code></li>
-<li class="missed"><code>        if status[0] == True:</code></li>
+<li class="executed"><code>        status = self.check_authentication()</code></li>
+<li class="executed"><code>        if status[0] == True:</code></li>
 <li class="missed"><code>            return status</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>        status = self.check_repo_exist()</code></li>
-<li class="missed"><code>        if status[0] == True:</code></li>
-<li class="missed"><code>            return status</code></li>
+<li class="executed"><code>        status = self.check_repo_exist()</code></li>
+<li class="executed"><code>        if status[0] == True:</code></li>
+<li class="executed"><code>            return status</code></li>
 <li class="ignored"><code></code></li>
 <li class="missed"><code>        status = self.check_branch_exist()</code></li>
 <li class="missed"><code>        if status[0] == True:</code></li>
