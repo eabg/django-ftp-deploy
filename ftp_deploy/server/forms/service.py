@@ -42,7 +42,7 @@ class ServiceForm(forms.ModelForm):
                      ),
             Div(
                 Div(
-                Submit('save', 'Submit', css_class='pull-right'),
+                    Submit('save', 'Submit', css_class='pull-right'),
                     css_class='col-sm-12'
                 ),
                 css_class='row'

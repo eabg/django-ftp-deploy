@@ -94,7 +94,7 @@
                             <th>Restorable</th>
                             <th>Status</th>
                             <th>
-                                {% if not service.lock or 1 %}
+                                {% if not service.lock %}
                                     <a href="{% url 'ftpdeploy_service_restore' service.pk %}" class="btn btn-success btn-xs pull-right" id="restore-init">Restore Deploys</a>
                                 {% else %}
                                     <button type="button" class="btn btn-default btn-xs pull-right" disabled="disabled">Service Locked</button>
@@ -102,7 +102,7 @@
                             </th>
                           </tr>
                         </thead>
-                        <tbody id="log-list">
+                        <tbody id="restore-list">
                                 {% for log in fail_logs %}
                                 <tr>
                                     <td>{{log.created}}</td>

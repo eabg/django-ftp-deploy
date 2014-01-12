@@ -10,16 +10,13 @@ a.list-group-item.active:hover{color: #428bca; background-color: #f5f5f5; border
 a#service-manage-status i{float: right; font-size: 35px; margin-top: 5px;}
 
 table td{vertical-align: middle !important;}
-table .progress{margin: 0; width: 50%}
 
 .label{padding: 0.3em 0.6em;}
 .wrap{overflow: hidden;}
-.center-text{text-align: center;}
 .c-default{color: #333 !important;}
 .c-remove{color:#d2322d !important;}
 .c-ok{color: #47a447 !important;}
 .c-skip{color: #ed9c28 !important;}
-.c-highlight{color: #3276b1!important;}
 
 div.popover {max-width: 550px !important;}
 .popover-content hr{margin: 5px 0;}

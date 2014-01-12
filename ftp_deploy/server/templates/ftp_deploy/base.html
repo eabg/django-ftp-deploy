@@ -27,15 +27,9 @@
     <div class="navbar navbar-default navbar-static-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
                 <a class="navbar-brand" href="{% url 'ftpdeploy_dashboard' %}">FTP Deploy</a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="">
                 <ul class="nav navbar-nav">
                     <li class="{% active 'dashboard' %}"><a href="{% url 'ftpdeploy_dashboard' %}">Services</a></li>
                     <li class="{% active 'notification' %}"><a href="{% url 'ftpdeploy_notification'%}" >Notifications</a></li>
@@ -53,8 +47,8 @@
                     <li><a href="{% url 'ftpdeploy_logout' %}"> <i class="fa fa-power-off"></i></a></li>
                  </ul>
             </div>
-          </div>
         </div>
+    </div>
 
 
     <div class="container">
