@@ -1,3 +1,9 @@
+v1.2.1 12.01.2014
+- tests development
+- template changes
+- code formating and bug fixes 
+- documentation update
+
 v1.2.0 19.12.2013
 -login screen for server application
 -implement notification per service

@@ -3,5 +3,8 @@ include README.rst
 recursive-include docs *.txt
 recursive-include requirements *.txt
 
+recursive-include ftp_deploy/templates *
+recursive-include ftp_deploy/tests *
 recursive-include ftp_deploy/server/static *
 recursive-include ftp_deploy/server/templates *
+

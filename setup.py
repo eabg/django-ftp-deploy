@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-ftp-deploy',
-    version='1.2.0',
+    version='1.2.1',
     author='Lukasz Pakula',
     author_email='lukaszpakula.pl@gmail.com',
     packages=[
@@ -10,9 +10,11 @@ setup(
         'ftp_deploy.migrations',
         'ftp_deploy.tests',
         'ftp_deploy.models',
-        'ftp_deploy.templates',
         'ftp_deploy.utils',
-        'ftp_deploy.server'
+        'ftp_deploy.server',
+        'ftp_deploy.server.forms',
+        'ftp_deploy.server.templatetags',
+        'ftp_deploy.server.views'
     ],
     include_package_data=True,
     url='http://bitbucket.org/lpakula/django-ftp-deploy',
