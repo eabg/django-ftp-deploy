@@ -28,10 +28,9 @@ class ftp_connection(object):
         """Remove file from 'file_path' location, and clear empty directories"""
         file_path = self.encode(file_path)
         self.ftp.delete(self.ftp_path + file_path)
-
-        dirname = file_path.split(os.sep)
+        dirname = file_path.split('/')       
         for i in xrange(len(dirname)):
-            current = os.sep.join(dirname[:-1 - i])
+            current = '/'.join(dirname[:-1 - i])
             try:
                 self.ftp.rmd(self.ftp_path + current)
             except Exception, e:
@@ -40,9 +39,9 @@ class ftp_connection(object):
     def make_dirs(self, file_path):
         """ Create FTP tree directories based on 'file_path'"""
         file_path = self.encode(file_path)
-        dirname = os.path.dirname(file_path).split(os.sep)
+        dirname = os.path.dirname(file_path).split('/')
         for i in xrange(len(dirname)):
-            current = os.sep.join(dirname[:i + 1])
+            current = '/'.join(dirname[:i + 1])
             try:
                 self.ftp.dir(self.ftp_path + current)
             except Exception, e:
