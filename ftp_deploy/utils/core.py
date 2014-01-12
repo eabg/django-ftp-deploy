@@ -91,7 +91,7 @@ class commits_parser(object):
                 elif file['type'] == 'modified':
                     modified.append(file['file']) if file['file'] not in modified and file['file'] not in added else False
                 elif file['type'] == 'removed':
-                    removed.append(file['file']) if file['file'] not in removed else False
+                    removed.append(file['file']) if file['file'] not in removed + added else False
                     added.remove(file['file']) if file['file'] in added else False
                     modified.remove(file['file']) if file['file'] in modified else False
 
