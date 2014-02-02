@@ -34,7 +34,9 @@ THIRD_PARTY_APPS = (
     'braces',
     'south',
     'django_nose',
-    'django_coverage'
+    'django_coverage',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 LOCAL_APPS = (

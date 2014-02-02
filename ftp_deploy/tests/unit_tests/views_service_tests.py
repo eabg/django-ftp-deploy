@@ -315,11 +315,17 @@ class ServiceRestoreViewTest(TestCase):
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
     def test_service_restore_POST_request_remove_logs_from_logs_tree_and_return_deploy_view(self, mock_object):
         view = setup_view(ServiceRestoreView(), self.post_request)
-        logs_tree = MagicMock(name='logs_tree')
-        logs_tree.secret_key = 'abc123'
-        mock_object.return_value = logs_tree
-
+        get_object = MagicMock(name='get_object',secret_key='abc123', lock=lambda: False)
+        mock_object.return_value = get_object
         response = view.post(view.request)
 
-        logs_tree.get_logs_tree.assert_has_calls([call.delete()])
-        self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': logs_tree.secret_key}), response.__str__())
+        get_object.assert_has_calls([call.get_logs_tree().delete()])
+        self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}), response.__str__())
+
+    @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
+    def test_service_POST_request_return_status_500_if_service_lock(self, mock_object):
+        mock_object.return_value = MagicMock(lock=lambda: True)
+        view = setup_view(ServiceRestoreView(), self.post_request)
+        response = view.post(view.request)
+
+        self.assertEqual(response.status_code,500)

@@ -6,7 +6,7 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
-from ftp_deploy.tests.utils.factories import ServiceFactory,NotificationFactory, LogFactory
+from ftp_deploy.tests.utils.factories import ServiceFactory, NotificationFactory, LogFactory, TaskFactory
 from ftp_deploy.models import Log
 
 
@@ -90,6 +90,16 @@ class ServiceTest(TestCase):
         self.service.check()
         self.assertEqual(self.service.status_message, '')
         self.assertTrue(self.service.repo_hook)
+
+    def test_service_lock_method(self):
+        task = TaskFactory(service=self.service)
+        self.assertFalse(self.service.lock())
+        task1 = TaskFactory(service=self.service, active=True)
+        self.assertTrue(self.service.lock())
+
+    def test_service_has_queue_method(self):
+        task = TaskFactory(service=self.service)
+        self.assertTrue(self.service.has_queue())
 
 
 class LogTest(TestCase):

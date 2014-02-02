@@ -5,13 +5,14 @@ import string
 import logging
 
 from django.contrib.auth.models import User
-from ftp_deploy.models import Service, Notification, Log
+from ftp_deploy.models import Service, Notification, Log, Task
 
 logger = logging.getLogger('factory')
 logger.setLevel(logging.ERROR)
 
 
 class NotificationFactory(factory.DjangoModelFactory):
+
     """Factory for Notification object"""
     FACTORY_FOR = Notification
 
@@ -41,11 +42,11 @@ class ServiceFactory(factory.DjangoModelFactory):
     status = True
     status_message = ''
     notification = factory.SubFactory(NotificationFactory)
-    lock = False
 
     @factory.sequence
     def secret_key(n):
         return ''.join(random.choice(string.letters + string.digits) for x in range(30))
+
 
 class LogFactory(factory.DjangoModelFactory):
 
@@ -64,7 +65,14 @@ class LogFactory(factory.DjangoModelFactory):
         return payload
 
 
+class TaskFactory(factory.DjangoModelFactory):
 
+    """Factory for task object"""
+    FACTORY_FOR = Task
+
+    name = factory.Sequence(lambda n: 'factory_name_%d' % n)
+    service = factory.SubFactory(ServiceFactory)
+    active = False
 
 
 class AdminUserFactory(factory.DjangoModelFactory):
@@ -72,8 +80,8 @@ class AdminUserFactory(factory.DjangoModelFactory):
 
     email = 'admin@admin.com'
     username = 'admin'
-    password = factory.PostGenerationMethodCall('set_password','admin')
+    password = factory.PostGenerationMethodCall('set_password', 'admin')
 
-    is_superuser = True 
-    is_staff = True 
-    is_active = True 
+    is_superuser = True
+    is_staff = True
+    is_active = True

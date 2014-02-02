@@ -1,7 +1,9 @@
 import pycurl
 import json
+
 from .curl import curl_connection
 from .decorators import check
+from ftp_deploy.conf import *
 
 
 class bitbucket_check(curl_connection):
