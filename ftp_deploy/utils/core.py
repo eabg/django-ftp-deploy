@@ -97,6 +97,14 @@ class commits_parser(object):
 
         return added,  modified, removed
 
+    def files_count(self):
+        count = 0
+
+        for commit in self.commits:
+            count += len(commit['files'])
+        return count
+
+
 
 class absolute_url(object):
 
