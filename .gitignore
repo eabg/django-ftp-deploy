@@ -18,3 +18,5 @@ _build
 *.log
 
 dist/*
+ftp_deploy/tests/coverage/*.html
+ftp_deploy/tests/coverage/modules/*.html
