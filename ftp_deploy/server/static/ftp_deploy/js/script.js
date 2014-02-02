@@ -164,18 +164,17 @@ $(document).ready(function(){
         }).done(function(content) {
             $('#restore-modal').modal('hide');
             $('#fail-deploys').remove();
-            $('#deploy-progress').slideDown();
 
             $.ajax({
                 type: "POST",
                 url: content,
                 data:{payload: payload}
             }).done(function() {
-                $('#deploy-progress').hide().before('<div class="alert alert-success">Resore completed!</div>')
+                
             }).fail(function(content) {
-                $('#deploy-progress').hide().before('<div class="alert alert-danger">Resore fail!</div>')
+                $('#deploy-progress').before('<div class="alert alert-danger">Resore fail!</div>')
             }).always(function(){
-                $('#service-manage-status').click();
+                location.reload();
             });
 
         }).fail(function(content) {

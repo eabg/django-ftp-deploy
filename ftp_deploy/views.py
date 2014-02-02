@@ -1,20 +1,21 @@
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import os
 import json
 from ftplib import FTP
 import tempfile
+from celery.result import AsyncResult
 
 from django.views.generic.base import View
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Log, Service
-from .conf import *
-from .utils.core import absolute_url, LockError
-from .utils.ftp import ftp_connection
-from .utils.email import notification_success, notification_fail
-from .utils.curl import curl_connection
+from .models import Service, Log, Task
+from .utils.core import absolute_url
+from .tasks import deploy_task
+from .utils.deploy import Deploy
+
+import time
 
 
 class DeployView(View):
@@ -28,98 +29,44 @@ class DeployView(View):
         except Exception, e:
             raise Http404
 
-        self.status = 200
-
-        self.bitbucket_username = BITBUCKET_SETTINGS['username']
-        self.bitbucket_password = BITBUCKET_SETTINGS['password']
-        self.bitbucket_branch = self.service.repo_branch
-
-        self.ftp_host = self.service.ftp_host
-        self.ftp_username = self.service.ftp_username
-        self.ftp_password = self.service.ftp_password
-        self.ftp_path = self.service.ftp_path
-
+        self.service_pk = str(self.service.pk)
         return super(DeployView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
 
-        self.json_string = request.POST['payload'].decode('string_escape').replace('\n', '')
-        self.data = json.loads(self.json_string)
-        last_commit = len(self.data['commits']) - 1
+        json_string = request.POST['payload'].decode('string_escape').replace('\n', '')
+        data = json.loads(json_string)
+
+        if(self.check_branch(data)):
+            host = absolute_url(request).build()
+            job = deploy_task.apply_async((host, json_string, self.service), countdown=1)
+            Task.objects.create(name=job.id, service=self.service)
+
+        return HttpResponse(status=200)
+
+    def check_branch(self, data):
+        """check if payload branch match set branch"""
+        if self.service.repo_source == 'bb':
+            last_commit = len(data['commits']) - 1
+            if data['commits'][last_commit]['branch'] == self.service.repo_branch:
+                return True
+
+        if self.service.repo_source == 'gh':
+            pass
+
+        return False
 
 
-        if self.data['commits'][last_commit]['branch'] == self.bitbucket_branch:
-            self.log = Log()
-            self.log.payload = self.json_string
-            self.log.service = self.service
-            self.log.save()
+class DeployStatusView(DeployView):
 
-            try:
-                self.ftp = ftp_connection(self.ftp_host, self.ftp_username, self.ftp_password, self.ftp_path)
+    def post(self, request, *args, **kwargs):
+        data = dict()
+        if self.service.has_queue():
+            task_id = self.service.task_set.all()[0]
+            task = AsyncResult(task_id.name)
+            data = task.result or dict(status=task.state)
 
-                if self.service.lock:
-                    raise LockError()
+        data['queue'] = self.service.task_set.all().count()
+        json_data = json.dumps(data)
+        return HttpResponse(json_data, mimetype='application/json')
 
-                self.service.lock = True
-                self.service.save()
-
-                self.ftp.connect()
-
-            except LockError, e:
-                self.set_fail(request, 'Service Locked', e)
-            except Exception, e:
-                self.set_fail(request, 'FTP Connection', e)
-            else:
-                try:
-                    curl = curl_connection(self.bitbucket_username, self.bitbucket_password)
-                    curl.authenticate()
-
-                    for i, commit in enumerate(self.data['commits']):
-
-                        for files in commit['files']:
-                            file_path = files['file']
-
-                            if files['type'] == 'removed':
-                                self.ftp.remove_file(file_path)
-                            else:
-                                url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (self.data['repository']['absolute_url'], commit['node'], file_path)
-                                url = str(url.encode('utf-8'))
-
-                                value = curl.perform(url)
-
-                                temp_file = tempfile.NamedTemporaryFile(delete=False)
-                                temp_file.write(value)
-                                temp_file.close()
-                                temp_file = open(temp_file.name, 'rb')
-
-                                self.ftp.make_dirs(file_path)
-                                self.ftp.create_file(file_path, temp_file)
-
-                                temp_file.close()
-                                os.unlink(temp_file.name)
-
-                except Exception, e:
-                    self.set_fail(request, self.data['user'], e)
-                else:
-                    self.log.user = self.data['user']
-                    self.log.status = True
-                    self.log.save()
-                    notification_success(absolute_url(request).build(), self.service, self.json_string)
-                finally:
-                    curl.close()
-
-            finally:
-                self.ftp.quit()
-                self.service.lock = False
-                self.service.check()
-                self.service.save()
-
-        return HttpResponse(status=self.status)
-
-    def set_fail(self, request, user, message):
-        self.log.user = user
-        self.log.status_message = message
-        self.log.status = False
-        self.log.save()
-        self.status = 500
-        notification_fail(absolute_url(request).build(), self.service, self.json_string, message)

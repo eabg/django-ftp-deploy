@@ -69,10 +69,10 @@
 	<br>
     <div class="row">
         <div class="col-sm-12">
-            <div id="deploy-progress" style="{% if not service.lock %}display: none;{% endif %}">
-                <h5>Deploying...</h5>
+            <div id="deploy-progress" style="{% if not service.has_queue %}display: none;{% endif %}">
+                <h5><span id="status"></span></h5>
                 <div class="progress progress-striped active">
-                    <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="">
                     
                     </div>
                 </div>
@@ -94,10 +94,10 @@
                             <th>Restorable</th>
                             <th>Status</th>
                             <th>
-                                {% if not service.lock %}
+                                {% if not service.has_queue %}
                                     <a href="{% url 'ftpdeploy_service_restore' service.pk %}" class="btn btn-success btn-xs pull-right" id="restore-init">Restore Deploys</a>
                                 {% else %}
-                                    <button type="button" class="btn btn-default btn-xs pull-right" disabled="disabled">Service Locked</button>
+                                    <button type="button" class="btn btn-default btn-xs pull-right" disabled="disabled">Deploying in Progress</button>
                                 {% endif %}
                             </th>
                           </tr>
@@ -155,6 +155,47 @@
             </table>
     	</div>
     </div>
+
+    {% if service.has_queue %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var url = '/ftpdeploy/deploy/status/{{service.secret_key}}'
+
+
+                var checkStatus = function(){
+                    $.ajax({
+                        type: "POST",
+                        url: url
+                    }).done(function(content) {
+
+                        if(content.status == 'PENDING'){
+                            $('#status').text(content.status);
+                            $('.progress-bar').css('width','0%') 
+                        } 
+                        if(content.status == 'SUCCESS'){
+                            $('#status').text(content.status);
+                            $('.progress-bar').css('width','100%') 
+                        } 
+
+                        if($.isNumeric(content.status)){
+                            $('#status').text(content.status+'% ('+content.file+')');
+                            $('.progress-bar').css('width',content.status+'%') 
+                        } 
+
+                        if(content.queue == 0){
+                            $('#status').text('SUCCESS');
+                            $('.progress-bar').css('width','100%')
+                            location.reload();
+                        } 
+                        if(content.queue > 0){setTimeout(checkStatus,200); }
+                    });
+                }
+
+                checkStatus();
+            });
+        </script>
+        
+    {% endif %}
 
 {% endblock content %}
 

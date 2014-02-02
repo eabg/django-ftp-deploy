@@ -18,7 +18,7 @@
                     <td>{{service.repo_name}}</td>
                     <td>{{service.repo_branch}}</td>
                     <td class="center-text">
-                        {% if service.lock %}
+                        {% if service.has_queue %}
                            <i class="fa fa-cog fa-spin c-highlight"></i>
                         {% else  %}  
                             <a href="{% url 'ftpdeploy_service_status' service.pk %}" class="service-list-status">
