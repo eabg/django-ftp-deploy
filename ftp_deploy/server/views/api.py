@@ -69,11 +69,3 @@ class BitbucketAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin,
         service.save()
         context = curl.perform_post(url, post)
         return context
-
-    def add_respository(self, curl):
-        """Add respository to repository account"""
-
-        url = 'https://api.bitbucket.org/1.0/repositories'
-        post = 'name=project_name'
-        context = curl.perform_post(url, post)
-        return context
