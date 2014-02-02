@@ -27,7 +27,6 @@ class Service(models.Model):
     status = models.BooleanField(default=True)
     status_message = models.TextField()
     notification = models.ForeignKey(Notification, null=True, blank=True, on_delete=models.SET_NULL)
-    lock = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -58,6 +57,12 @@ class Service(models.Model):
         logs = self.log_set.filter(skip=0).filter(pk__gte=first_fail_log[0].pk).order_by('pk')
         return logs
 
+    def lock(self):
+        return self.task_set.filter(active=True).exists()
+
+    def has_queue(self):
+        return self.task_set.all().exists()
+        
     def check(self, **kwargs):
 
         message = list()
