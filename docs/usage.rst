@@ -30,6 +30,8 @@ The Main **Dashboard** page is available at::
 | The dashboard allows you to manage all of your services from one page. All failing services are placed on the top of the list, to make it easy to find all services containing issues.
 | A screenshot is available in the :ref:`Other <other>` section.
 
+| If service is currently deploying, status icon is change to animated cog.
+
 
 Service
 *******
@@ -117,7 +119,7 @@ The manage page contains sections such as:
    Icon representing current status. If validation passes, it displays date of the latest status check, otherwise list of issues. In order to refresh the status you need to click *status icon* (the same applies for services list on dashboard page) or edit and save service.
 
    .. note:: Status is not refreshed automatically because of expense of validation process. Usually takes up to 15 seconds to go through all validation points.
-   
+
    
 * Restore Deploys (if any of deploys has failed)
   
@@ -145,6 +147,8 @@ The manage page contains sections such as:
   
   List of recent deploys. List mirror `Logs`_ filtered by current service.
 
+
+* If service is deploying or has deploy in the queue, progress bar is presented to display current status. Restore deploy is locket at this time as well.
 
 
 Edit Service

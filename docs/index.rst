@@ -21,6 +21,7 @@ django-ftp-deploy allows you to automatically deploy GIT repositories to FTP ser
 * Email Notifications per service
 * Statistics of Deployments
 * Deployment Logs
+* Queuing deploys
 
 
 Supported GIT repositories:
@@ -66,20 +67,12 @@ Roadmap
 *v2.0*
 
 * Github support
-* Queuing deploys (along with deploying progressbar)
 * Cron validation
 * FTP password encryption
 * Advanced statistics
+* Support multi queues
 
   
-
-Knowing issues
---------------
-
-Queuing deploys is not supported. If deploy is run before last deploy has been finished, it's captured with failed status. You need to go and manually restore deploy then, to make your repository and FTP data consisent. 
-
-Issue will be fixed by queuing deploys using `Celery <http://docs.celeryproject.org/en/latest/index.html>`_ 
-
 
 
 Indices and tables

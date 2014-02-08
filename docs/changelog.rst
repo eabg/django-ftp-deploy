@@ -5,6 +5,11 @@ Changelog
 
 Changelog for django-ftp-deploy module
 
+v1.3
+----
+
+* Queueing deploys
+
 v1.2.1
 ------
 
