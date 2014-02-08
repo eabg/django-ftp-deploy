@@ -10,11 +10,11 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
-from ...utils.ftp import ftp_connection
-from ...utils.deploy import Deploy
-from ...models import Service
-from ...tests.utils.factories import ServiceFactory, TaskFactory
-from ...tests.utils.payloads import LoadPayload
+from ftp_deploy.utils.ftp import ftp_connection
+from ftp_deploy.utils.deploy import Deploy
+from ftp_deploy.models import Service
+from ftp_deploy.tests.utils.factories import ServiceFactory, TaskFactory
+from ftp_deploy.tests.utils.payloads import LoadPayload
 
 
 class DeployUtilsTest(TestCase):
