@@ -166,8 +166,8 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        if request.POST['payload']:
-            self.get_object().get_logs_tree().delete()
+        if self.get_object().lock():
+            return HttpResponse(status=500)
 
         return HttpResponse(reverse('ftpdeploy_deploy', kwargs={'secret_key':self.get_object().secret_key}))
 

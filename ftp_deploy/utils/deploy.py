@@ -35,13 +35,13 @@ class Deploy(object):
 
     def perform(self):
         """Perform ftp connection and choose repository perform method (bitbucket or github)"""
-        self.log = Log()
-        self.log.payload = self.json_string
-        self.log.service = self.service
 
         if self.data['user'] == 'Restore':
             self.service.get_logs_tree().delete()
 
+        self.log = Log()
+        self.log.payload = self.json_string
+        self.log.service = self.service
         self.log.save()
 
         try:
