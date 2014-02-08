@@ -14,6 +14,11 @@ class LoadPayload(object):
             payload = content_file.read()
         return payload
 
+    def bb_payload_restore(self):
+        with open('%s/payloads/bb_payload_restore.txt' % os.path.dirname(__file__), 'r') as content_file:
+            payload = content_file.read()
+        return payload
+
     def bb_payload_added(self):
         with open('%s/payloads/bb_payload_added.txt' % os.path.dirname(__file__), 'r') as content_file:
             payload = content_file.read()
