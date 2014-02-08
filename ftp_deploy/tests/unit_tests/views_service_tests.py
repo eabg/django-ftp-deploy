@@ -313,13 +313,12 @@ class ServiceRestoreViewTest(TestCase):
             context['payload'], '{"commits": [{"node": "57baa5c89dae", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "added", "file": "example/file2.txt"}, {"type": "added", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681871", "parents": ["322d9c181661"], "branch": "master", "message": "test message commit 1", "revision": null, "size": -1}, {"node": "57baa5c89daa", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "removed", "file": "example/file3.txt"}, {"type": "removed", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681876", "parents": ["322d9c181662"], "branch": "master", "message": "test message commit 2", "revision": null, "size": -1}, {"node": "57baa5c89dae", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "added", "file": "example/file2.txt"}, {"type": "added", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681871", "parents": ["322d9c181661"], "branch": "master", "message": "test message commit 1", "revision": null, "size": -1}, {"node": "57baa5c89daa", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "removed", "file": "example/file3.txt"}, {"type": "removed", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681876", "parents": ["322d9c181662"], "branch": "master", "message": "test message commit 2", "revision": null, "size": -1}], "canon_url": "https://bitbucket.org", "user": "Restore", "repository": {"website": "", "fork": false, "name": "Service", "scm": "git", "absolute_url": "/username/service/", "owner": "username", "slug": "repo_slug", "is_private": true}, "truncated": false}')
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
-    def test_service_restore_POST_request_remove_logs_from_logs_tree_and_return_deploy_view(self, mock_object):
+    def test_service_restore_POST_request_return_deploy_view(self, mock_object):
         view = setup_view(ServiceRestoreView(), self.post_request)
         get_object = MagicMock(name='get_object',secret_key='abc123', lock=lambda: False)
         mock_object.return_value = get_object
         response = view.post(view.request)
-
-        get_object.assert_has_calls([call.get_logs_tree().delete()])
+        
         self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}), response.__str__())
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
