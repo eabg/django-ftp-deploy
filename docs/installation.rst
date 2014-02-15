@@ -78,8 +78,8 @@ Configuration
 * Add ``DEPLOY_BITBUCKET_SETTINGS`` configuration to your settings::
 
     DEPLOY_BITBUCKET_SETTINGS = {
-    'username'      : '',
-    'password'      : '',
+      'username'      : '',
+      'password'      : '',
     }
 
 
@@ -96,10 +96,41 @@ Configuration
       CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
   All required template files are included.
+
+* Add celery configuration to your settings::
   
+    BROKER_URL = '' 
+    CELERY_RESULT_BACKEND=''
+    #settings depends on message broker and result backend, see example below
+
+* Replace ``projectname`` in celery file::
+
+    # ftp_deploy/celery.py
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')  
+
+* Go to root folder of your project and run celery worker as follow::
+
+    celery -A ftp_deploy worker --concurrency 1
+
+  .. note:: Celery example above apply only for development enviroment. Celery worker in production should be run as a deamon. Read more in Celery `documentation <http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html>`_.
+
+  .. warning:: Remember to include '*--concurrency 1*' option when running the worker. That avoid to perform more then one task at the same time.
   
-Celery
-******
+Celery - RabbitMQ
+*****************
+
+If you are using Ubuntu or Debian install RabbitMQ by executing this command::
+
+    sudo apt-get install rabbitmq-server
+
+* Add celery configuration to your settings::
+  
+    BROKER_URL = 'amqp://'
+    CELERY_RESULT_BACKEND='amqp'
+
+
+Celery - django
+***************
 
 .. note:: Configuration presented below use django as a broker and result backend, however this is not recommended for production enviroment. Read more in Celery `documentation <https://celery.readthedocs.org/en/latest/>`_.
 
@@ -120,26 +151,12 @@ In order to use django as broker and backend, project need to have  `django-cele
      ...
    )
 
-Add celery configuration to your settings
+* Add celery configuration to your settings::
   
-  .. code-block:: python
-  
-      BROKER_URL = 'django://'
-      CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+    BROKER_URL = 'django://'
+    CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
-Synchronize your database using `south <https://pypi.python.org/pypi/South/>`_::
+* Synchronize your database using `south <https://pypi.python.org/pypi/South/>`_::
     
-  python manage.py migrate djcelery
-  python manage.py migrate kombu.transport.django
-
-
-
-Go to root folder of your project and run celery worker as follow::
-
-  celery -A ftp_deploy worker --concurrency 1
-
-.. note:: Used worker example apply only for development enviroment as well. Celery worker in production should be run as a deamon. Read more in Celery `documentation <http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html>`_.
-
-.. warning:: Remember to include '*--concurrency 1*' option when running the worker. That avoid to perform more then one task at the same time.
-
-
+    python manage.py migrate djcelery
+    python manage.py migrate kombu.transport.django
