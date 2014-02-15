@@ -5,7 +5,7 @@ import os
 from celery import Celery
 from django.conf import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'service.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')
 
 app = Celery('ftp_deploy')
 app.config_from_object('django.conf:settings')
