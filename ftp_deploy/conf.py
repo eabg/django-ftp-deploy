@@ -6,3 +6,8 @@ BITBUCKET_SETTINGS = getattr(settings, 'DEPLOY_BITBUCKET_SETTINGS', {
     'password' 		: '',
 })
 
+GITHUB_SETTINGS = getattr(settings, 'DEPLOY_GITHUB_SETTINGS', {
+    'username' 		: '',
+    'password' 		: '',
+})
+

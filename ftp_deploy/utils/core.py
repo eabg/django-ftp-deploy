@@ -4,7 +4,7 @@ import certifi
 import StringIO
 
 from .ftp import ftp_check
-from .repo import bitbucket_check
+from .repo import bitbucket_check, github_check
 from ftp_deploy.conf import *
 
 
@@ -28,17 +28,19 @@ class service_check(object):
     def check_repo(self):
         """Check repositories connection, along with POST Hook"""
         if self.service.repo_source == 'bb':
-            bb = bitbucket_check(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'], self.service)
-            bb_fail, bb_fail_message = bb.check_all()
+            repo = bitbucket_check(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'], self.service)
+        elif self.service.repo_source == 'gh':
+            repo = github_check(GITHUB_SETTINGS['username'], GITHUB_SETTINGS['password'], self.service)  
 
-            if bb_fail:
-                self.message.append(bb_fail_message)
-                self.fails[1] = True
+        repo_fail, repo_fail_message = repo.check_all()
+        if repo_fail:
+            self.message.append(repo_fail_message)
+            self.fails[1] = True
 
-            hook_fail, hook_fail_message = bb.check_hook_exist()
-            if hook_fail:
-                self.message.append(hook_fail_message)
-                self.fails[2] = True
+        hook_fail, hook_fail_message = repo.check_hook_exist()
+        if hook_fail:
+            self.message.append(hook_fail_message)
+            self.fails[2] = True
 
     def check_ftp(self):
         """Check FTP connection"""
@@ -57,58 +59,9 @@ class service_check(object):
 
         return self.fails, self.message
 
-
-class commits_parser(object):
-
-    """Commit parser for list of commits. Take commits dictionary captured from payload"""
-
-    def __init__(self, commits):
-        self.commits = commits
-
-    def commits_info(self):
-        """Return commits details list in format [message,author,raw_node]"""
-        output = list()
-        [output.append([commit['message'], commit['author'], commit['raw_node']]) for commit in reversed(self.commits)]
-        return output
-
-    def email_list(self):
-        """Return email list from raw_author, limited to unique emails"""
-        output = list()
-        for commit in self.commits:
-            email = re.search('%s(.*)%s' % ('<', '>'), commit['raw_author']).group(1)
-            output.append(email) if email not in output else False
-        return output
-
-    def file_diff(self):
-        """Return files list grouped by added, modified and removed. Respect order of commits"""
-        added, removed, modified = list(), list(), list()
-
-        for commit in self.commits:
-            for file in commit['files']:
-                if file['type'] == 'added':
-                    added.append(file['file']) if file['file'] not in added else False
-                    removed.remove(file['file']) if file['file'] in removed else False
-                elif file['type'] == 'modified':
-                    modified.append(file['file']) if file['file'] not in modified and file['file'] not in added else False
-                elif file['type'] == 'removed':
-                    removed.append(file['file']) if file['file'] not in removed + added else False
-                    added.remove(file['file']) if file['file'] in added else False
-                    modified.remove(file['file']) if file['file'] in modified else False
-
-        return added,  modified, removed
-
-    def files_count(self):
-        count = 0
-
-        for commit in self.commits:
-            count += len(commit['files'])
-        return count
-
-
-
 class absolute_url(object):
 
-    """Build absolute url to root url whthout trailing slash"""
+    """Build absolute url to root url without trailing slash"""
 
     def __init__(self, request):
         self.request = request
@@ -123,3 +76,5 @@ class LockError(Exception):
 
     def __str__(self):
         return 'Deploy failed because service is Locked!'
+
+

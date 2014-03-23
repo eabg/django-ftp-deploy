@@ -212,13 +212,13 @@ $(document).ready(function(){
         var val = $(this).val()
         var action = $(this).attr('data-action');
         var options = '<option></option>';
+        var data = 'respositories';
 
+        $('#id_repo_name').show().next().hide();
 
-        if (val == ''){
-            $('#id_repo_name').show().next().hide();
-            return false;
-        }
-        if(val == 'bb') data = 'respositories';
+        if(val == '') return false;
+        if(val == 'bb') action = action.replace('__','bb');
+        if(val == 'gh') action = action.replace('__','gh');
         
         $.ajax({
             type: "POST",

@@ -30,7 +30,7 @@
                         <i class="fa fa-check c-ok"></i>
                     {% else %}
                         <b>{{service.hook_url}}</b> 
-                        <a href="{% url 'ftpdeploy_bb_api' service.pk %}" id="add_hook"><i class="fa fa-times c-remove"></i> Add hook</a> 
+                        <a href="{% url 'ftpdeploy_repo_api' service.pk service.repo_source %}" id="add_hook"><i class="fa fa-times c-remove"></i> Add hook</a> 
                     {% endif %}
                     </small>
                 </li>    

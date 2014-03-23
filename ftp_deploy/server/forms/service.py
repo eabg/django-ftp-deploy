@@ -29,7 +29,7 @@ class ServiceForm(forms.ModelForm):
                      'ftp_path'
                      ),
             Fieldset('Repository',
-                     Field('repo_source', data_action=reverse('ftpdeploy_bb_api', args=(0,))),
+                     Field('repo_source', data_action=reverse('ftpdeploy_repo_api', args=(0, '__'))),
                      'repo_name',
                      'repo_slug_name',
                      'repo_branch'

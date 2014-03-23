@@ -1,7 +1,6 @@
 import json
 from django.db import models
 
-from ftp_deploy.utils.core import commits_parser
 from .service import Service
 
 class Task(models.Model):

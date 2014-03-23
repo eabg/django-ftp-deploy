@@ -6,7 +6,18 @@ from django.db import models
 from django.core.urlresolvers import reverse
 
 from ftp_deploy.utils.core import service_check
+from ftp_deploy.conf import *
 from .notification import Notification
+
+def repo_choices():
+    choices = tuple()
+    if BITBUCKET_SETTINGS['username'] and BITBUCKET_SETTINGS['password']:
+        choices = choices + (('bb', 'BitBucket'),)
+
+    if GITHUB_SETTINGS['username'] and GITHUB_SETTINGS['password']:
+        choices = choices + (('gh', 'Github'),)
+
+    return choices
 
 
 class Service(models.Model):
@@ -16,7 +27,7 @@ class Service(models.Model):
     ftp_password = models.CharField('Password', max_length=50)
     ftp_path = models.CharField('Path', max_length=255)
 
-    repo_source = models.CharField('Source', max_length=10, choices=(('bb', 'BitBucket'),))
+    repo_source = models.CharField('Source', max_length=10, choices=repo_choices())
     repo_name = models.CharField('Respository Name', max_length=50)
     repo_slug_name = models.SlugField('Respository Slug', max_length=50)
     repo_branch = models.CharField('Branch', max_length=50)

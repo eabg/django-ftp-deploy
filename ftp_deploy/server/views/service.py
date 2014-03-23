@@ -16,7 +16,8 @@ from braces.views import JSONResponseMixin, LoginRequiredMixin
 from ftp_deploy.conf import *
 from ftp_deploy.models import Service, Log, Notification
 from ftp_deploy.utils.curl import curl_connection
-from ftp_deploy.utils.core import commits_parser, absolute_url
+from ftp_deploy.utils.core import absolute_url
+from ftp_deploy.utils.repo import commits_parser
 from ftp_deploy.server.forms import ServiceForm, ServiceNotificationForm
 
 
@@ -149,7 +150,11 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         # init payload dictionary
         context['payload'] = json.loads(logs[0].payload)
 
-        context['payload']['user'] = 'Restore'
+        if service.repo_source == 'bb':
+            context['payload']['user'] = 'Restore'
+        elif service.repo_source == 'gh':
+            context['payload']['pusher']['name'] = 'Restore'
+
         context['service'] = service
 
         commits = list()
@@ -160,8 +165,8 @@ class ServiceRestoreView(LoginRequiredMixin, DetailView):
         context['payload']['commits'] = commits
         context['payload'] = json.dumps(context['payload'])
 
-        context['files_added'], context['files_modified'], context['files_removed'] = commits_parser(commits).file_diff()
-        context['commits_info'] = commits_parser(commits).commits_info()
+        context['files_added'], context['files_modified'], context['files_removed'] = commits_parser(commits,service.repo_source).file_diff()
+        context['commits_info'] = commits_parser(commits,service.repo_source).commits_info()
 
         return context
 
