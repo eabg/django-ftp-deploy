@@ -291,26 +291,44 @@ class ServiceNotificationViewTest(TestCase):
 class ServiceRestoreViewTest(TestCase):
 
     def setUp(self):
-        self.service = ServiceFactory()
+        self.service_bb = ServiceFactory()
+        self.service_gh = ServiceFactory(repo_source='gh')
         self.get_request = RequestFactory().get('/request')
         self.post_request = RequestFactory().post('/request', {'payload': True})
 
-    def test_service_restore_view_context(self):
-        log1 = LogFactory(service=self.service, status=False)
-        log2 = LogFactory(service=self.service, status=False)
+    def test_service_restore_view_bb_context(self):
+        log1 = LogFactory(service=self.service_bb, status=False)
+        log2 = LogFactory(service=self.service_bb, status=False)
 
-        view = setup_view(ServiceRestoreView(), self.get_request, pk=self.service.pk)
-        view.object = self.service
+        view = setup_view(ServiceRestoreView(), self.get_request, pk=self.service_bb.pk)
+        view.object = self.service_bb
         context = view.get_context_data()
 
         self.assertEqual(context['files_added'], [u'example/file2.txt'])
         self.assertEqual(context['files_modified'], [u'example/file1.txt'])
         self.assertEqual(context['files_removed'], [u'example/file3.txt'])
-        self.assertEqual(context['service'], self.service)
+        self.assertEqual(context['service'], self.service_bb)
         self.assertEqual(context['commits_info'], [[u'test message commit 2', u'username', u'57baa5c89daef238c2043c7e866c2e997d681876'], [u'test message commit 1', u'username', u'57baa5c89daef238c2043c7e866c2e997d681871'], [
                          u'test message commit 2', u'username', u'57baa5c89daef238c2043c7e866c2e997d681876'], [u'test message commit 1', u'username', u'57baa5c89daef238c2043c7e866c2e997d681871']])
         self.assertEqual(
             context['payload'], '{"commits": [{"node": "57baa5c89dae", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "added", "file": "example/file2.txt"}, {"type": "added", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681871", "parents": ["322d9c181661"], "branch": "master", "message": "test message commit 1", "revision": null, "size": -1}, {"node": "57baa5c89daa", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "removed", "file": "example/file3.txt"}, {"type": "removed", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681876", "parents": ["322d9c181662"], "branch": "master", "message": "test message commit 2", "revision": null, "size": -1}, {"node": "57baa5c89dae", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "added", "file": "example/file2.txt"}, {"type": "added", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681871", "parents": ["322d9c181661"], "branch": "master", "message": "test message commit 1", "revision": null, "size": -1}, {"node": "57baa5c89daa", "files": [{"type": "modified", "file": "example/file1.txt"}, {"type": "removed", "file": "example/file3.txt"}, {"type": "removed", "file": "example/file4.txt"}], "raw_author": "Author <author@email.com>", "utctimestamp": "2013-01-01 00:00:36+00:00", "author": "username", "timestamp": "2013-01-01 00:00:00", "raw_node": "57baa5c89daef238c2043c7e866c2e997d681876", "parents": ["322d9c181662"], "branch": "master", "message": "test message commit 2", "revision": null, "size": -1}], "canon_url": "https://bitbucket.org", "user": "Restore", "repository": {"website": "", "fork": false, "name": "Service", "scm": "git", "absolute_url": "/username/service/", "owner": "username", "slug": "repo_slug", "is_private": true}, "truncated": false}')
+
+    def test_service_restore_view_gh_context(self):
+        log1 = LogFactory(service=self.service_gh, status=False)
+        log2 = LogFactory(service=self.service_gh, status=False)
+
+        view = setup_view(ServiceRestoreView(), self.get_request, pk=self.service_gh.pk)
+        view.object = self.service_gh
+        context = view.get_context_data()
+
+        self.assertEqual(context['files_added'], [u'example/file2.txt'])
+        self.assertEqual(context['files_modified'], [u'example/file1.txt'])
+        self.assertEqual(context['files_removed'], [u'example/file3.txt'])
+        self.assertEqual(context['service'], self.service_gh)
+        self.assertEqual(context['commits_info'], [[u'test message commit 2', u'Author', u'2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2'], [u'test message commit 1', u'Author', u'2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1'], [u'test message commit 2', u'Author', u'2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2'], [u'test message commit 1', u'Author', u'2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1']])
+        self.assertEqual(
+            context['payload'], '{"forced": false, "compare": "https://github.com/username/service/compare/421501901a96...2fa93a45f6c4", "after": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1", "repository": {"fork": false, "watchers": 0, "description": "", "language": "Python", "has_downloads": true, "url": "https://github.com/username/service", "stargazers": 0, "created_at": 1394095816, "private": false, "name": "repo_slug", "pushed_at": 1394097254, "owner": {"name": "Owner", "email": "owner@email.com"}, "has_wiki": true, "open_issues": 0, "has_issues": true, "forks": 0, "master_branch": "master", "id": 17471585, "size": 0}, "created": false, "deleted": false, "commits": [{"committer": {"name": "Commiter", "email": "commiter@email.com"}, "added": ["example/file2.txt", "example/file4.txt"], "author": {"name": "Author", "email": "author@email.com"}, "distinct": true, "timestamp": "2014-03-06T01:14:02-08:00", "modified": ["example/file1.txt"], "url": "https://github.com/username/service/commit/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1", "message": "test message commit 1", "removed": [], "id": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1"}, {"committer": {"name": "Commiter", "email": "commiter@email.com"}, "added": [], "author": {"name": "Author", "email": "author@email.com"}, "distinct": true, "timestamp": "2014-03-06T01:14:02-08:00", "modified": ["example/file1.txt"], "url": "https://github.com/username/service/commit/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1", "message": "test message commit 2", "removed": ["example/file3.txt", "example/file4.txt"], "id": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2"}, {"committer": {"name": "Commiter", "email": "commiter@email.com"}, "added": ["example/file2.txt", "example/file4.txt"], "author": {"name": "Author", "email": "author@email.com"}, "distinct": true, "timestamp": "2014-03-06T01:14:02-08:00", "modified": ["example/file1.txt"], "url": "https://github.com/username/service/commit/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1", "message": "test message commit 1", "removed": [], "id": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1"}, {"committer": {"name": "Commiter", "email": "commiter@email.com"}, "added": [], "author": {"name": "Author", "email": "author@email.com"}, "distinct": true, "timestamp": "2014-03-06T01:14:02-08:00", "modified": ["example/file1.txt"], "url": "https://github.com/username/service/commit/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a1", "message": "test message commit 2", "removed": ["example/file3.txt", "example/file4.txt"], "id": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2"}], "pusher": {"name": "Restore", "email": "pusher@email.com"}, "head_commit": {"committer": {"name": "Comitter", "email": "comitter@email.com"}, "added": [], "author": {"name": "Author", "email": "author@email.com"}, "distinct": true, "timestamp": "2014-03-06T01:14:02-08:00", "modified": ["example/file1.txt"], "url": "https://github.com/username/service/commit/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2", "message": "change base html", "removed": ["example/file3.txt", "example/file4.txt"], "id": "2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2"}, "ref": "refs/heads/master", "before": "421501901a96c247a0f712108698a41b7aec73d9"}')
+
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
     def test_service_restore_POST_request_return_deploy_view(self, mock_object):

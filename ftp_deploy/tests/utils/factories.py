@@ -58,12 +58,15 @@ class LogFactory(factory.DjangoModelFactory):
     status = True
     status_message = ''
 
-    @factory.sequence
-    def payload(n):
-        with open('%s/payloads/bb_payload.txt' % os.path.dirname(__file__), 'r') as content_file:
-            payload = content_file.read()
+    @factory.LazyAttribute
+    def payload(obj):
+        if obj.service.repo_source == 'bb':
+            with open('%s/payloads/bb_payload.txt' % os.path.dirname(__file__), 'r') as content_file:
+                payload = content_file.read()
+        elif obj.service.repo_source == 'gh':
+            with open('%s/payloads/gh_payload.txt' % os.path.dirname(__file__), 'r') as content_file:
+                payload = content_file.read()
         return payload
-
 
 class TaskFactory(factory.DjangoModelFactory):
 

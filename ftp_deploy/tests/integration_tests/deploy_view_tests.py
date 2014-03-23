@@ -18,25 +18,35 @@ class DeployViewTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.payload = LoadPayload()
-        self.service = ServiceFactory()
+        self.service_bb = ServiceFactory()
+        self.service_gh = ServiceFactory(repo_source='gh')
 
     def test_deploy_view_wrong_secret_key_return_404(self):
         response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key':'wrong_secret_key'}))
         self.assertEqual(response.status_code, 404)
 
     @patch('ftp_deploy.views.deploy_task')
-    def test_POST_request_perform_deploy_task_and_return_status_200(self, mock_deploy_task):
+    def test_POST_request_perform_bb_deploy_task_and_return_status_200(self, mock_deploy_task):
         mock_deploy_task.apply_async = MagicMock(name='apply_async')
 
         payload = self.payload.bb_payload_empty()
-        response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service.secret_key}), {'payload': payload})
+        response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service_bb.secret_key}), {'payload': payload})
+        self.assertTrue(mock_deploy_task.apply_async.called)
+        self.assertEqual(response.status_code, 200)
+
+    @patch('ftp_deploy.views.deploy_task')
+    def test_POST_request_perform_gh_deploy_task_and_return_status_200(self, mock_deploy_task):
+        mock_deploy_task.apply_async = MagicMock(name='apply_async')
+
+        payload = self.payload.gh_payload_empty()
+        response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service_gh.secret_key}), {'payload': payload})
         self.assertTrue(mock_deploy_task.apply_async.called)
         self.assertEqual(response.status_code, 200)
 
     def test_POST_request_create_task(self):
         payload = self.payload.bb_payload_empty()
-        response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service.secret_key}), {'payload': payload})
-        self.assertTrue(self.service.task_set.all().exists())
+        response = self.client.post(reverse('ftpdeploy_deploy', kwargs={'secret_key': self.service_bb.secret_key}), {'payload': payload})
+        self.assertTrue(self.service_bb.task_set.all().exists())
 
 
 class DeployStatusViewTest(TestCase):

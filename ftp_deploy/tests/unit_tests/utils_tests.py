@@ -14,12 +14,13 @@ from mock import call
 from ftp_deploy.conf import *
 from ftp_deploy.models import Log
 from ftp_deploy.utils.decorators import check
-from ftp_deploy.utils.core import commits_parser, absolute_url, LockError, service_check, bitbucket_check
+from ftp_deploy.utils.core import absolute_url, LockError, service_check, bitbucket_check
+from ftp_deploy.utils.repo import commits_parser, repository_api
 from ftp_deploy.utils.email import notification_success, notification_fail
 from ftp_deploy.utils.ftp import ftp_check, ftp_connection
 from ftp_deploy.utils.curl import curl_connection
 
-from ftp_deploy.tests.utils.factories import ServiceFactory,LogFactory, NotificationFactory
+from ftp_deploy.tests.utils.factories import ServiceFactory, LogFactory, NotificationFactory
 from ftp_deploy.models.service import Service
 
 
@@ -42,6 +43,96 @@ class UtilsDecoratorCheckTest(TestCase):
 
     def function_not_raise_exception(self):
         pass
+
+
+class UtilsRepoCommitParserTest(TestCase):
+
+    def setUp(self):
+        self.service = ServiceFactory()
+
+        log = LogFactory(service=self.service)
+        payload = json.loads(log.payload)
+        self.data = commits_parser(payload['commits'], self.service.repo_source)
+
+    def test_commit_parser_file_diff(self):
+        """file_diff return files information in format - files_added, files_modified, files_removed"""
+        files_added, files_modified, files_removed = self.data.file_diff()
+
+        self.assertEqual(files_added[0], 'example/file2.txt')
+        self.assertEqual(files_modified[0], 'example/file1.txt')
+        self.assertEqual(files_removed[0], 'example/file3.txt')
+        self.assertNotIn('example/file4.txt', files_removed)
+
+    def test_commit_parser_commits_info(self):
+        """commits_info return commits info in format [['message','username','raw_node'],]"""
+        commits_info = self.data.commits_info()
+        self.assertEqual(commits_info, [[u'test message commit 2', u'username', u'57baa5c89daef238c2043c7e866c2e997d681876'], [
+                         u'test message commit 1', u'username', u'57baa5c89daef238c2043c7e866c2e997d681871']])
+
+    def test_commit_parser_email_list_return_list_of_emails_from_commits(self):
+        email_list = self.data.email_list()
+        self.assertEqual(email_list, [u'author@email.com'])
+
+
+class UtilsRepoAPI(TestCase):
+
+    def setUp(self):
+        self.service_bb = ServiceFactory()
+        self.service_gh = ServiceFactory(repo_source='gh')
+
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_init_bb_perform_curl_initialization(self, mock_curl_connection):
+        api = repository_api(self.service_bb.repo_source)
+        mock_curl_connection.assert_called_once_with(BITBUCKET_SETTINGS['username'], BITBUCKET_SETTINGS['password'])
+        mock_curl_connection.assert_has_calls(call().authenticate())
+
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_init_gh_perform_curl_initialization(self, mock_curl_connection):
+        api = repository_api(self.service_gh.repo_source)
+        mock_curl_connection.assert_called_once_with(GITHUB_SETTINGS['username'], GITHUB_SETTINGS['password'])
+        mock_curl_connection.assert_has_calls(call().authenticate())
+
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_repositories_bb_use_proper_url(self, mock_curl_connection):
+        api = repository_api(self.service_bb.repo_source)
+        api.curl = MagicMock(name="mock_curl")
+        api.repositories()
+        api.curl.assert_has_calls([call.perform('https://bitbucket.org/api/1.0/user/repositories')])
+
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_repositories_gh_use_proper_url(self, mock_curl_connection):
+        api = repository_api(self.service_gh.repo_source)
+        api.curl = MagicMock(name="mock_curl")
+        api.repositories()
+        api.curl.assert_has_calls([call.perform('https://api.github.com/user/repos')])
+
+    @patch('ftp_deploy.utils.repo.core')
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_add_hook_bb_use_proper_url(self, mock_curl_connection, mock_core):
+        absolute_url = MagicMock(name='absolute_url')
+        absolute_url.build = MagicMock(return_value='build')
+        mock_core.absolute_url = MagicMock(name='absolute_url', return_value=absolute_url)
+        api = repository_api(self.service_bb.repo_source)
+        api.curl = MagicMock(name="mock_curl")
+        api.add_hook(self.service_bb, MagicMock(name='request', return_value='request'))
+
+        calls = [call.perform_post('https://api.bitbucket.org/1.0/repositories/%s/%s/services/ ' % (
+            BITBUCKET_SETTINGS['username'], self.service_bb.repo_slug_name), 'type=POST&URL=build/ftpdeploy/deploy/%s' % (self.service_bb.secret_key))]
+        api.curl.assert_has_calls(calls)
+
+    @patch('ftp_deploy.utils.repo.core')
+    @patch('ftp_deploy.utils.repo.curl_connection')
+    def test_repo_add_hook_gh_use_proper_url(self, mock_curl_connection, mock_core):
+        absolute_url = MagicMock(name='absolute_url')
+        absolute_url.build = MagicMock(return_value='build')
+        mock_core.absolute_url = MagicMock(name='absolute_url', return_value=absolute_url)
+        api = repository_api(self.service_gh.repo_source)
+        api.curl = MagicMock(name="mock_curl")
+        api.add_hook(self.service_gh, MagicMock(name='request', return_value='request'))
+
+        calls = [call.perform_post('https://api.github.com/repos/%s/%s/hooks' % (
+            GITHUB_SETTINGS['username'], self.service_gh.repo_slug_name), '{"active": true, "config": {"url": "build%s", "content_type": "json"}, "name": "web"}' % (self.service_gh.hook_url()))]
+        api.curl.assert_has_calls(calls)
 
 
 class UtilsCoreServiceCheckTest(TestCase):
@@ -112,35 +203,6 @@ class UtilsCoreServiceCheckTest(TestCase):
         self.assertEqual(response, ('fails', 'message'))
 
 
-class UtilsCoreCommitParserTest(TestCase):
-
-    def setUp(self):
-        self.service = ServiceFactory()
-
-        log = LogFactory(service=self.service)
-        payload = json.loads(log.payload)
-        self.data = commits_parser(payload['commits'])
-
-    def test_commit_parser_file_diff(self):
-        """file_diff return files information in format - files_added, files_modified, files_removed"""
-        files_added, files_modified, files_removed = self.data.file_diff()
-
-        self.assertEqual(files_added[0], 'example/file2.txt')
-        self.assertEqual(files_modified[0], 'example/file1.txt')
-        self.assertEqual(files_removed[0], 'example/file3.txt')
-        self.assertNotIn('example/file4.txt', files_removed)
-
-    def test_commit_parser_commits_info(self):
-        """commits_info return commits info in format [['message','username','raw_node'],]"""
-        commits_info = self.data.commits_info()
-        self.assertEqual(commits_info, [[u'test message commit 2', u'username', u'57baa5c89daef238c2043c7e866c2e997d681876'], [
-                         u'test message commit 1', u'username', u'57baa5c89daef238c2043c7e866c2e997d681871']])
-
-    def test_commit_parser_email_list_return_list_of_emails_from_commits(self):
-        email_list = self.data.email_list()
-        self.assertEqual(email_list, [u'author@email.com'])
-
-
 class UtilsCoreAbsoluteURLTest(TestCase):
 
     def test_absoluteurl_build_return_absolute_url_of_the_website(self):
@@ -195,11 +257,11 @@ class UtilsEmailTest(TestCase):
         notification = notification_success(self.host, self.service, self.log.payload)
 
         payload = json.loads(self.log.payload)
-        files_added, files_modified, files_removed = commits_parser(payload['commits']).file_diff()
+        files_added, files_modified, files_removed = commits_parser(payload['commits'], self.service.repo_source).file_diff()
 
         self.assertEqual(notification.context()['service'], self.service)
         self.assertEqual(notification.context()['host'], self.host)
-        self.assertEqual(notification.context()['commits_info'], commits_parser(payload['commits']).commits_info())
+        self.assertEqual(notification.context()['commits_info'], commits_parser(payload['commits'], self.service.repo_source).commits_info())
         self.assertEqual(notification.context()['files_added'], files_added)
         self.assertEqual(notification.context()['files_modified'], files_modified)
         self.assertEqual(notification.context()['files_removed'], files_removed)
@@ -266,7 +328,7 @@ class UtilsCurlTest(TestCase):
 
         curl.curl.assert_has_calls([call.setopt('URL', 'example/url'), call.setopt('WRITEFUNCTION', 'io_write'), call.perform()])
 
-    def test_curl_perform_post_method_senf_POST_request_with_post_data(self):
+    def test_curl_perform_post_method_send_POST_request_with_post_data(self):
         curl = curl_connection('curl_username', 'curl_password')
         curl.curl = MagicMock(name='mock_curl')
         type(curl.curl).URL = PropertyMock(name='MOCK_URL', return_value='URL')
@@ -274,7 +336,7 @@ class UtilsCurlTest(TestCase):
 
         curl.perform_post('example/url', 'post=data')
 
-        curl.curl.assert_has_calls([call.setopt('URL', 'example/url'), call.setopt('POSTFIELDS', 'post=data'), call.perform()])
+        curl.curl.assert_has_calls([call.setopt('URL', 'example/url'), call.setopt('POSTFIELDS', 'post=data'), call.perform()], any_order=True)
 
     @patch('ftp_deploy.utils.curl.pycurl')
     def test_curl_get_http_code_method_return_http_response_of_current_curl_request(self, mock_pycurl):
@@ -317,7 +379,7 @@ class UtilsFTPTest(TestCase):
     def test_ftp_connection_remove_file_method_remove_file_and_clear_empty_directories(self):
         return_default = lambda value: value
         self.ftp_connection.ftp = MagicMock(name='ftp')
-        self.ftp_connection.ftp.rmd = MagicMock(name='rmd',side_effect=[return_default, Exception('no empty directory')])
+        self.ftp_connection.ftp.rmd = MagicMock(name='rmd', side_effect=[return_default, Exception('no empty directory')])
         self.ftp_connection.remove_file('path/to/file/file.txt')
 
         self.ftp_connection.ftp.rmd.assert_has_calls([call('ftp/path/path/to/file'), call('ftp/path/path/to')])

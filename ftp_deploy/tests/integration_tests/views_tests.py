@@ -16,8 +16,8 @@ class ViewsTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.PhantomJS()
-        self.browser.implicitly_wait(5)
-        self.wait = WebDriverWait(self.browser, 5)
+        self.browser.implicitly_wait(10)
+        self.wait = WebDriverWait(self.browser, 10)
 
     def tearDown(self):
         self.browser.quit()
