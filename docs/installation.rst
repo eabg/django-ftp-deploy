@@ -75,9 +75,14 @@ Installation
 Configuration
 -------------
 
-* Add ``DEPLOY_BITBUCKET_SETTINGS`` configuration to your settings::
+* Add ``DEPLOY_BITBUCKET_SETTINGS`` and/or ``DEPLOY_GITHUB_SETTINGS`` configuration to your settings::
 
     DEPLOY_BITBUCKET_SETTINGS = {
+      'username'      : '',
+      'password'      : '',
+    }
+
+    DEPLOY_GITHUB_SETTINGS = {
       'username'      : '',
       'password'      : '',
     }
@@ -87,6 +92,9 @@ Configuration
         | *username*: bitbucket username
         | *password*: bitbucket password
 
+  ``DEPLOY_GITHUB_SETTINGS``
+        | *username*: github username
+        | *password*: github password
 
 
 * The FTP Deploy Dashboard **requires** the *bootstrap3* template pack for `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
