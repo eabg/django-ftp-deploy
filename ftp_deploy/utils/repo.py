@@ -104,7 +104,6 @@ class repository_api(object):
                 "active": True,
                 "config": {
                     "url": '%s%s' % (core.absolute_url(request).build(), service.hook_url()),
-                    "content_type": "json"
                 }
             }
 
@@ -299,7 +298,8 @@ class github_check(curl_connection):
 
         if type(hooks) == list:
             for hook in hooks:
-                if hook['name'] == "web" and hook['config']['url'] == self.service.hook_url():
+                value = hook['config']['url']
+                if value.find(str(self.service.hook_url())) != -1 and hook['name'] == "web":
                     return False, ''
 
         raise Exception("Hook is not set up")
