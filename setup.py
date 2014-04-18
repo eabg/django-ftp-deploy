@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-ftp-deploy',
-    version='1.3.0',
+    version='1.4.0',
     author='Lukasz Pakula',
     author_email='lukaszpakula.pl@gmail.com',
     packages=[

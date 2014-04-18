@@ -83,6 +83,7 @@ ftp_deploy/tests/__init__.py
 ftp_deploy/tests/__init__.pyc
 ftp_deploy/tests/fabfile.py
 ftp_deploy/tests/fabfile.pyc
+ftp_deploy/tests/screen.png
 ftp_deploy/tests/conf/__init__.py
 ftp_deploy/tests/conf/__init__.pyc
 ftp_deploy/tests/conf/conf.py
@@ -171,6 +172,13 @@ ftp_deploy/tests/utils/payloads/bb_payload_modified.txt
 ftp_deploy/tests/utils/payloads/bb_payload_removed1.txt
 ftp_deploy/tests/utils/payloads/bb_payload_removed2.txt
 ftp_deploy/tests/utils/payloads/bb_payload_restore.txt
+ftp_deploy/tests/utils/payloads/gh_payload.txt
+ftp_deploy/tests/utils/payloads/gh_payload_added.txt
+ftp_deploy/tests/utils/payloads/gh_payload_empty.txt
+ftp_deploy/tests/utils/payloads/gh_payload_modified.txt
+ftp_deploy/tests/utils/payloads/gh_payload_removed1.txt
+ftp_deploy/tests/utils/payloads/gh_payload_removed2.txt
+ftp_deploy/tests/utils/payloads/gh_payload_restore.txt
 ftp_deploy/utils/__init__.py
 ftp_deploy/utils/core.py
 ftp_deploy/utils/curl.py
