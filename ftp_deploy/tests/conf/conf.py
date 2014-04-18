@@ -51,7 +51,7 @@ PASSWORD_HASHERS = (
 )
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-SOUTH_TESTS_MIGRATE = False
+SOUTH_TESTS_MIGRATE = True
 DEFAULT_FILE_STORAGE = "inmemorystorage.InMemoryStorage"
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
