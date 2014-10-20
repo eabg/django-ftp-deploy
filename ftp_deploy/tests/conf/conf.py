@@ -5,7 +5,7 @@ import logging
 selenium_logger = logging.getLogger('selenium.webdriver.remote.remote_connection')
 selenium_logger.setLevel(logging.ERROR)
 
-from service.settings import *
+from projectname.settings import *
 
 
 DATABASES = {
