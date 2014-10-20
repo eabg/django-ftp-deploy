@@ -19,9 +19,9 @@ class LogView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(LogView, self).get_context_data(**kwargs)
-        context['service_list'] = Service.objects.all().values('repo_name', 'pk')
+        context['service_list'] = Service.objects.all().values('repo_name',
+                                                               'pk')
         return context
-
 
     def post(self, request, *args, **kwargs):
         logs = self.get_queryset()
@@ -30,10 +30,12 @@ class LogView(LoginRequiredMixin, ListView):
 
         if not int(self.request.POST['status']):
             logs = logs.filter(status=self.request.POST['status'])
-        return render_to_response('ftp_deploy/log/list.html', locals(), context_instance=RequestContext(request))
+        return render_to_response('ftp_deploy/log/list.html', locals(),
+                                  context_instance=RequestContext(request))
 
 
-class LogSkipDeployView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View):
+class LogSkipDeployView(LoginRequiredMixin, JSONResponseMixin,
+                        SingleObjectMixin, View):
 
     """View for skip fail logs"""
 

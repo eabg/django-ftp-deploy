@@ -20,15 +20,17 @@ class ftp_connection(object):
         self.connected = 1
 
     def create_file(self, file_path, content):
-        """Create file populated with 'content' and save to 'file_path' location"""
+        """Create file populated with 'content'
+            and save to 'file_path' location"""
         file_path = self.encode(file_path)
         self.ftp.storbinary('STOR ' + self.ftp_path + file_path, content)
 
     def remove_file(self, file_path):
-        """Remove file from 'file_path' location, and clear empty directories"""
+        """Remove file from 'file_path' location,
+            and clear empty directories"""
         file_path = self.encode(file_path)
         self.ftp.delete(self.ftp_path + file_path)
-        dirname = file_path.split('/')       
+        dirname = file_path.split('/')
         for i in xrange(len(dirname)):
             current = '/'.join(dirname[:-1 - i])
             try:
@@ -72,12 +74,11 @@ class ftp_check(ftp_connection):
     def check_all(self):
 
         status = self.check_ftp_login()
-        if status[0] == True:
+        if status[0] is True:
             return status
 
         status = self.check_ftp_path()
-        if status[0] == True:
+        if status[0] is True:
             return status
 
         return False, ''
-

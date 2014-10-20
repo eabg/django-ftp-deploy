@@ -4,6 +4,7 @@ from django.db import models
 from ftp_deploy.utils.repo import commits_parser
 from .service import Service
 
+
 class Log(models.Model):
     service = models.ForeignKey(Service, blank=True)
     payload = models.TextField()
@@ -15,7 +16,7 @@ class Log(models.Model):
 
     def commits_info(self):
         commits = json.loads(self.payload)['commits']
-        return commits_parser(commits,self.service.repo_source).commits_info()
+        return commits_parser(commits, self.service.repo_source).commits_info()
 
     class Meta:
         ordering = ('-created',)

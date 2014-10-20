@@ -1,18 +1,16 @@
-import json
 
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
-from django.http import HttpResponse
 
 from braces.views import JSONResponseMixin, LoginRequiredMixin
 
 from ftp_deploy.conf import *
 from ftp_deploy.models import Service
-from ftp_deploy.utils.curl import curl_connection
 from ftp_deploy.utils.repo import repository_api
 
 
-class RepoAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View):
+class RepoAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin,
+                  View):
 
     """View for managing BitBucket API"""
 
@@ -20,7 +18,8 @@ class RepoAPIView(LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin, View
 
     def dispatch(self, request, repo, *args, **kwargs):
         self.repo_api = repository_api(repo)
-        return super(RepoAPIView, self).dispatch(request, repo, * args, **kwargs)
+        return super(RepoAPIView, self).dispatch(request, repo, * args,
+                                                 **kwargs)
 
     def post(self, request, repo, *args, **kwargs):
         if self.request.POST['data'] == 'respositories':

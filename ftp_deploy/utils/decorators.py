@@ -4,7 +4,8 @@ class check(object):
     """
     Wrap function in try/except
 
-    Return True with error message (with prefix) if raise Exception, otherwise return False and empty string
+    Return True with error message (with prefix) if raise Exception,
+    otherwise return False and empty string
     """
 
     def __init__(self, prefix):

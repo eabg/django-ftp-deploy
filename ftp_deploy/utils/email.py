@@ -6,12 +6,12 @@ from django.template.loader import render_to_string
 
 from ftp_deploy.conf import *
 from .repo import commits_parser, repository_parser
-from .curl import curl_connection
 
 
 class notification():
 
-    """Notification abstract class, take three arguments, host, service object and payload json string"""
+    """Notification abstract class, take three arguments, host,
+        service object and payload json string"""
     __metaclass__ = ABCMeta
 
     def __init__(self, host, service, payload):
@@ -50,7 +50,8 @@ class notification():
             text_content = render_to_string(self.template_text, self.context())
             html_content = render_to_string(self.template_html, self.context())
 
-            msg = EmailMultiAlternatives(self.subject(), text_content, self.from_email, [recipient])
+            msg = EmailMultiAlternatives(self.subject(), text_content,
+                                         self.from_email, [recipient])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
@@ -76,7 +77,8 @@ class notification_success(notification):
                 emails_list += self.repo.deploy_email()
 
             if notifications.commit_user_success():
-                emails_list += commits_parser(self.commits, self.service.repo_source).email_list()
+                emails_list += commits_parser(
+                    self.commits, self.service.repo_source).email_list()
 
         return list(set(emails_list))
 
@@ -84,8 +86,12 @@ class notification_success(notification):
         context = dict()
         context['service'] = self.service
         context['host'] = self.host
-        context['commits_info'] = commits_parser(self.commits, self.service.repo_source).commits_info()
-        context['files_added'], context['files_modified'], context['files_removed'] = commits_parser(self.commits, self.service.repo_source).file_diff()
+        context['commits_info'] = commits_parser(
+            self.commits, self.service.repo_source).commits_info()
+        context['files_added'], context['files_modified'], context[
+            'files_removed'] = commits_parser(
+            self.commits, self.service.repo_source).file_diff()
+
         return context
 
 
@@ -115,7 +121,8 @@ class notification_fail(notification):
                 emails_list += self.repo.deploy_email()
 
             if notifications.commit_user_fail():
-                emails_list += commits_parser(self.commits, self.service.repo_source).email_list()
+                emails_list += commits_parser(
+                    self.commits, self.service.repo_source).email_list()
 
         return list(set(emails_list))
 

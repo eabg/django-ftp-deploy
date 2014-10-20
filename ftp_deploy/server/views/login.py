@@ -42,5 +42,3 @@ class logoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect(reverse('ftpdeploy_login'))
-
-

@@ -1,8 +1,5 @@
 from __future__ import absolute_import
-import os
 import json
-from ftplib import FTP
-import tempfile
 from celery.result import AsyncResult
 
 from django.views.generic.base import View
@@ -10,10 +7,9 @@ from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Service, Log, Task
+from .models import Service, Task
 from .tasks import deploy_task
 from .utils.core import absolute_url
-from .utils.deploy import Deploy
 from .utils.repo import repository_parser
 
 
@@ -25,19 +21,21 @@ class DeployView(View):
     def dispatch(self, *args, **kwargs):
         try:
             self.service = Service.objects.get(secret_key=kwargs['secret_key'])
-        except Exception, e:
+        except Exception:
             raise Http404
 
         self.service_pk = str(self.service.pk)
         return super(DeployView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        json_string = request.POST['payload'].decode('string_escape').replace('\n', '')
+        json_string = request.POST['payload'].decode(
+            'string_escape').replace('\n', '')
         data = json.loads(json_string)
 
         if(repository_parser(data, self.service).check_branch()):
             host = absolute_url(request).build()
-            job = deploy_task.apply_async((host, json_string, self.service), countdown=1)
+            job = deploy_task.apply_async((host, json_string, self.service),
+                                          countdown=1)
             Task.objects.create(name=job.id, service=self.service)
 
         return HttpResponse(status=200)

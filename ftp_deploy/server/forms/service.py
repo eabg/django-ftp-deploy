@@ -2,7 +2,6 @@ from django import forms
 from django.core.urlresolvers import reverse
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Field, Submit, Div
 
 from ftp_deploy.models import Service
@@ -29,7 +28,9 @@ class ServiceForm(forms.ModelForm):
                      'ftp_path'
                      ),
             Fieldset('Repository',
-                     Field('repo_source', data_action=reverse('ftpdeploy_repo_api', args=(0, '__'))),
+                     Field('repo_source',
+                           data_action=reverse(
+                               'ftpdeploy_repo_api', args=(0, '__'))),
                      'repo_name',
                      'repo_slug_name',
                      'repo_branch'

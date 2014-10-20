@@ -1,8 +1,8 @@
-from django.views.generic import ListView, UpdateView, DeleteView, DetailView, CreateView
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.views.generic import ListView, UpdateView, DeleteView, CreateView
+from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
 
-from braces.views import JSONResponseMixin, LoginRequiredMixin
+from braces.views import LoginRequiredMixin
 
 from ftp_deploy.models import Notification
 from ftp_deploy.server.forms import NotificationForm
@@ -25,7 +25,8 @@ class NotificationAddView(LoginRequiredMixin, CreateView):
     template_name = "ftp_deploy/notification/form.html"
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Notification has been added.')
+        messages.add_message(self.request, messages.SUCCESS,
+                             'Notification has been added.')
         return super(NotificationAddView, self).form_valid(form)
 
 
@@ -45,7 +46,8 @@ class NotificationEditView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Notification has been updated.')
+        messages.add_message(self.request, messages.SUCCESS,
+                             'Notification has been updated.')
         return super(NotificationEditView, self).form_valid(form)
 
 
@@ -58,5 +60,7 @@ class NotificationDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "ftp_deploy/notification/delete.html"
 
     def delete(self, request, *args, **kwargs):
-        messages.add_message(request, messages.SUCCESS, 'Notification has been removed.')
-        return super(NotificationDeleteView, self).delete(request, *args, **kwargs)
+        messages.add_message(request, messages.SUCCESS,
+                             'Notification has been removed.')
+        return super(NotificationDeleteView, self).delete(request, *args,
+                                                          **kwargs)

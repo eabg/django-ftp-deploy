@@ -15,7 +15,8 @@ class curl_connection(object):
         """Authenticate curl connection"""
         self.curl = pycurl.Curl()
         self.curl.setopt(pycurl.CAINFO, certifi.where())
-        self.curl.setopt(self.curl.USERPWD, '%s:%s' % (self.username, self.password))
+        self.curl.setopt(self.curl.USERPWD, '%s:%s' % (self.username,
+                         self.password))
 
     def perform(self, url):
         """Perform get request and return respond value"""

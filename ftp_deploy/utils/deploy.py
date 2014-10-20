@@ -24,7 +24,8 @@ class Deploy(object):
         self.task = Task.objects.get(name=task_name)
         self.data = json.loads(payload)
         self.json_string = payload
-        self.files_count = commits_parser(self.data['commits'], self.service.repo_source).files_count()
+        self.files_count = commits_parser(
+            self.data['commits'], self.service.repo_source).files_count()
 
         self.ftp_host = self.service.ftp_host
         self.ftp_username = self.service.ftp_username
@@ -36,7 +37,10 @@ class Deploy(object):
         self.user = self.repo.deploy_name()
 
     def perform(self):
-        """Perform ftp connection and choose repository perform method (bitbucket or github)"""
+        """
+            Perform ftp connection and choose repository perform method
+            (bitbucket or github)
+        """
 
         if self.user == 'Restore':
             self.service.get_logs_tree().delete()
@@ -46,9 +50,10 @@ class Deploy(object):
         self.log.service = self.service
         self.log.save()
 
-
         try:
-            self.ftp = ftp_connection(self.ftp_host, self.ftp_username, self.ftp_password, self.ftp_path)
+            self.ftp = ftp_connection(
+                self.ftp_host, self.ftp_username, self.ftp_password,
+                self.ftp_path)
 
             if self.service.lock():
                 raise LockError()
@@ -99,7 +104,9 @@ class Deploy(object):
                 if files['type'] == 'removed':
                     self.ftp.remove_file(file_path)
                 else:
-                    url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (self.data['repository']['absolute_url'], commit['node'], file_path)
+                    url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (
+                        self.data['repository']['absolute_url'],
+                        commit['node'], file_path)
                     url = str(url.encode('utf-8'))
 
                     value = curl.perform(url)
@@ -124,7 +131,10 @@ class Deploy(object):
                 self.update_progress(i, file)
                 i += 1
 
-                url = 'https://raw.github.com/%s/%s/%s/%s' % (self.data['repository']['owner']['name'], self.data['repository']['name'], commit['id'], file)
+                url = 'https://raw.github.com/%s/%s/%s/%s' % (
+                    self.data['repository']['owner']['name'],
+                    self.data['repository']['name'], commit['id'], file)
+
                 url = str(url.encode('utf-8'))
                 value = curl.perform(url)
                 self.create_file(file, value)
@@ -133,7 +143,9 @@ class Deploy(object):
 
     def update_progress(self, i, file_path):
         progress_percent = int(100 * float(i) / float(self.files_count))
-        current_task.update_state(state='PROGRESS', meta={'status': progress_percent, 'file': os.path.basename(file_path)})
+        current_task.update_state(state='PROGRESS', meta={
+                                  'status': progress_percent,
+                                  'file': os.path.basename(file_path)})
 
     def create_file(self, file_path, value):
         temp_file = tempfile.NamedTemporaryFile(delete=False)

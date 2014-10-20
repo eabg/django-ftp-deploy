@@ -1,6 +1,5 @@
 import random
 import string
-import json
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -8,6 +7,7 @@ from django.core.urlresolvers import reverse
 from ftp_deploy.utils.core import service_check
 from ftp_deploy.conf import *
 from .notification import Notification
+
 
 def repo_choices():
     choices = tuple()
@@ -27,17 +27,21 @@ class Service(models.Model):
     ftp_password = models.CharField('Password', max_length=50)
     ftp_path = models.CharField('Path', max_length=255)
 
-    repo_source = models.CharField('Source', max_length=10, choices=repo_choices())
+    repo_source = models.CharField('Source', max_length=10,
+                                   choices=repo_choices())
     repo_name = models.CharField('Respository Name', max_length=50)
     repo_slug_name = models.SlugField('Respository Slug', max_length=50)
     repo_branch = models.CharField('Branch', max_length=50)
     repo_hook = models.BooleanField(default=False)
 
-    secret_key = models.CharField('Secret Key', unique=True, max_length=30, default=lambda: ''.join(random.choice(string.letters + string.digits) for x in range(30)))
+    secret_key = models.CharField('Secret Key', unique=True, max_length=30,
+                                  default=lambda: ''.join(random.choice(
+                                      string.letters + string.digits) for x in range(30)))
 
     status = models.BooleanField(default=True)
     status_message = models.TextField()
-    notification = models.ForeignKey(Notification, null=True, blank=True, on_delete=models.SET_NULL)
+    notification = models.ForeignKey(Notification, null=True, blank=True,
+                                     on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -60,12 +64,15 @@ class Service(models.Model):
         return self.log_set.latest('created').user
 
     def hook_url(self):
-        return reverse('ftpdeploy_deploy', kwargs={'secret_key': self.secret_key})
+        return reverse('ftpdeploy_deploy', kwargs={'secret_key':
+                       self.secret_key})
 
     def get_logs_tree(self):
-        """get logs tree for restore deploys. Include all logs since first fail apart of skiped."""
+        """get logs tree for restore deploys.
+            Include all logs since first fail apart of skiped."""
         first_fail_log = self.log_set.filter(status=0).order_by('pk')[:1]
-        logs = self.log_set.filter(skip=0).filter(pk__gte=first_fail_log[0].pk).order_by('pk')
+        logs = self.log_set.filter(skip=0).filter(
+            pk__gte=first_fail_log[0].pk).order_by('pk')
         return logs
 
     def lock(self):
@@ -73,7 +80,7 @@ class Service(models.Model):
 
     def has_queue(self):
         return self.task_set.all().exists()
-        
+
     def check(self, **kwargs):
 
         message = list()
