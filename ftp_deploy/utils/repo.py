@@ -110,6 +110,7 @@ class repository_api(object):
                 "config": {
                     "url": '%s%s' % (core.absolute_url(request).build(),
                                      service.hook_url()),
+                    "content_type": "json"
                 }
             }
 
