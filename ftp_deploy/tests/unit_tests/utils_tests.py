@@ -116,7 +116,7 @@ class UtilsRepoAPI(TestCase):
         api.curl = MagicMock(name="mock_curl")
         api.add_hook(self.service_bb, MagicMock(name='request', return_value='request'))
 
-        calls = [call.perform_post('https://api.bitbucket.org/1.0/repositories/%s/%s/services/ ' % (
+        calls = [call.perform_post('https://api.bitbucket.org/1.0/repositories/%s/%s/services/' % (
             BITBUCKET_SETTINGS['username'], self.service_bb.repo_slug_name), 'type=POST&URL=build/ftpdeploy/deploy/%s' % (self.service_bb.secret_key))]
         api.curl.assert_has_calls(calls)
 
