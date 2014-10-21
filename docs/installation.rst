@@ -7,7 +7,7 @@ Installation and requirements for django-ftp-deploy module
 
 
 Requirements
-------------   
+------------
 
 Required third party libraries are **installed automatically** if you use pip to install django-ftp-deploy.
 
@@ -29,14 +29,14 @@ Installation
 
 
 #. `Download <https://pypi.python.org/pypi/django-ftp-deploy/>`_  and install ``django-ftp-deploy`` with `requirements`_ manually,
-    
+
    or Install ``django-ftp-deploy`` using pip::
 
         pip install django-ftp-deploy
 
 
 #. Add ``ftp_deploy`` and ``ftp_deploy.server`` to your ``INSTALLED_APPS`` list in your settings
-   
+
    .. code-block:: python
 
     INSTALLED_APPS = (
@@ -44,7 +44,17 @@ Installation
       'ftp_deploy',
       'ftp_deploy.server',
       ...
-    )    
+    )
+
+#. Add `` "django.core.context_processors.request"`` to your ``TEMPLATE_CONTEXT_PROCESSORS`` list
+
+   .. code-block:: python
+
+    TEMPLATE_CONTEXT_PROCESSORS = (
+      ...
+      'django.core.context_processors.request',
+      ...
+    )
 
 #. Add ``django-ftp-deploy`` to your ``urlpatterns`` list in your urls
 
@@ -58,17 +68,17 @@ Installation
           )
 
 #. Synchronize your database. It is highly recommended you use `south <https://pypi.python.org/pypi/South/>`_ migration tool for future development purposes
-   
+
    .. code-block:: python
 
         python manage.py migrate ftp_deploy
-   
-      
+
+
 
 #. Copy static files into your ``STATIC_ROOT`` folder
-   
+
    .. code-block:: python
-   
+
        python manage.py collectstatic
 
 
@@ -100,21 +110,21 @@ Configuration
 * The FTP Deploy Dashboard **requires** the *bootstrap3* template pack for `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
 
   .. code-block:: python
-  
+
       CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
   All required template files are included.
 
 * Add celery configuration to your settings::
-  
-    BROKER_URL = '' 
+
+    BROKER_URL = ''
     CELERY_RESULT_BACKEND=''
     #settings depends on message broker and result backend, see example below
 
 * Replace ``projectname`` in celery file::
 
     # ftp_deploy/celery.py
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')  
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')
 
 * Go to root folder of your project and run celery worker as follow::
 
@@ -123,7 +133,7 @@ Configuration
   .. note:: Celery example above apply only for development enviroment. Celery worker in production should be run as a deamon. Read more in Celery `documentation <http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html>`_.
 
   .. warning:: Remember to include '*--concurrency 1*' option when running the worker. That avoid to perform more then one task at the same time.
-  
+
 Celery - RabbitMQ
 *****************
 
@@ -132,7 +142,7 @@ If you are using Ubuntu or Debian install RabbitMQ by executing this command::
     sudo apt-get install rabbitmq-server
 
 * Add celery configuration to your settings::
-  
+
     BROKER_URL = 'amqp://'
     CELERY_RESULT_BACKEND='amqp'
 
@@ -145,11 +155,11 @@ Celery - django
 In order to use django as broker and backend, project need to have  `django-celery <https://pypi.python.org/pypi/django-celery>`_ project installed:
 
 * Install django-celery using pip::
-    
+
     pip install django-celery
 
 * Add *djcelery* to your ``INSTALLED_APPS``
-  
+
   .. code-block:: python
 
    INSTALLED_APPS = (
@@ -160,11 +170,11 @@ In order to use django as broker and backend, project need to have  `django-cele
    )
 
 * Add celery configuration to your settings::
-  
+
     BROKER_URL = 'django://'
     CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
 * Synchronize your database using `south <https://pypi.python.org/pypi/South/>`_::
-    
+
     python manage.py migrate djcelery
     python manage.py migrate kombu.transport.django
