@@ -1,11 +1,14 @@
 """Conf file implemented coverage report """
 
-from conf import *
+from os.path import dirname, join
 
-TEST_RUNNER = 'ftp_deploy.tests.conf.testrunner.NoseCoverageTestRunner'
+from .conf import *
+
+TEST_RUNNER = 'tests.conf.testrunner.NoseCoverageTestRunner'
 COVERAGE_MODULE_EXCLUDES = [
     'tests$', 'urls$', 'migrations', 'admin$', 'conf$', '__init__'
 ]
 
 COVERAGE_MODULE_EXCLUDES += DJANGO_APPS + THIRD_PARTY_APPS
-COVERAGE_REPORT_HTML_OUTPUT_DIR = join(dirname(dirname(__file__)), 'coverage')
+COVERAGE_REPORT_HTML_OUTPUT_DIR = join(
+    dirname(dirname(__file__)), 'django-ftp-deploy/ftp_deploy/tests/coverage')

@@ -1,16 +1,18 @@
+import settings
+
 from fabric.api import local
 
 
 def test():
     """All Tests"""
-    local("python ../../../../manage.py test ftp_deploy \
-          --settings=ftp_deploy.tests.conf.conf --exe")
+    local("python ../manage.py test ftp_deploy \
+          --settings=%s.conf --exe", settings.PROJECT_NAME)
 
 
 def testc():
     """All Tests with coverage"""
-    local("python ../../../../manage.py test ftp_deploy \
-          --settings=ftp_deploy.tests.conf.confc --exe")
+    local("python ../manage.py test ftp_deploy \
+          --settings=%s.confc --exe", settings.PROJECT_NAME)
 
 
 def testu(module=''):
@@ -18,9 +20,9 @@ def testu(module=''):
     if module:
         module = '.tests.unit_tests.%s' % module
 
-    local("python ../../../../manage.py test ftp_deploy%s \
+    local("python ../manage.py test ftp_deploy%s \
           --exclude=integration_tests --exclude==external_tests \
-          --settings=ftpdeploy.conf --exe" % module)
+          --settings=%s.conf.conf --exe" % (module, settings.PROJECT_NAME))
 
 
 def testi(module=''):
@@ -28,6 +30,6 @@ def testi(module=''):
     if module:
         module = '.tests.integration_tests.%s' % module
 
-    local("python ../../../../manage.py test ftp_deploy%s \
+    local("python ../manage.py test ftp_deploy%s \
           --exclude=external_tests --exclude=unit_tests  \
-          --settings=ftpdeploy.conf --exe" % module)
+          --settings=%s.conf.conf --exe" % (module, settings.PROJECT_NAME))
