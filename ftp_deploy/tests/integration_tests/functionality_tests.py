@@ -120,12 +120,8 @@ class ViewsTest(LiveServerTestCase):
         body = self.browser.find_element_by_tag_name('body').text
         self.assertIn('Login', body)
 
-        self.browser.save_screenshot('screen.png')
-
     def test_can_see_notification_page_and_manage_notifications(self):
         self.user_authenticate()
-
-        # self.browser.save_screenshot('screen.png')
 
         # User go to notification page by click Notification link on left hand side menu
         page = self.browser.find_element_by_id('page')
@@ -260,7 +256,6 @@ class ViewsTest(LiveServerTestCase):
         self.assertNotIn('No Notifications', table.text)
         table_rows = self.browser.find_elements_by_xpath("//table/tbody/tr")
         self.assertEqual(len(table_rows), 1)
-        # self.browser.save_screenshot('screen.png')
 
     def test_can_see_and_use_log_page(self):
         self.user_authenticate()
@@ -345,8 +340,6 @@ class ViewsTest(LiveServerTestCase):
 
         table = self.browser.find_element_by_tag_name('table')
         self.assertIn(Log3.service.repo_name, table.text)
-
-        self.browser.save_screenshot('screen.png')
 
     def test_can_see_service_dashboard_page_and_manage_services(self):
 
@@ -602,5 +595,3 @@ class ViewsTest(LiveServerTestCase):
         self.assertNotIn(service1.repo_name, service_list.text)
         self.assertIn(service2.repo_name, service_list.text)
         self.assertIn(service3.repo_name, service_list.text)
-
-        self.browser.save_screenshot('screen.png')
