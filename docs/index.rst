@@ -29,7 +29,7 @@ Supported GIT repositories:
 
 * Bitbucket
 * Github - **NEW**
-  
+
 
 
 Current tests coverage status:
@@ -44,7 +44,7 @@ User Guide
 .. toctree::
    :maxdepth: 3
 
-   installation 
+   installation
    usage
    other
    changelog
@@ -53,24 +53,24 @@ User Guide
 Get Involved!
 -------------
 
-Get involved and help make this application better!
+Get involved and help make this app better!
 
 .. toctree::
-   :maxdepth: 3  
-    
+   :maxdepth: 3
+
    getinvolved
 
 
 
 Roadmap
--------  
+-------
 
 * Cron validation
 * FTP password encryption
 * Advanced statistics
 * Support multi queues
 
-  
+
 
 
 Indices and tables

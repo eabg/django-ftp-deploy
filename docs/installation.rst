@@ -9,15 +9,14 @@ Installation and requirements for django-ftp-deploy module
 Requirements
 ------------
 
-Required third party libraries are **installed automatically** if you use pip to install django-ftp-deploy.
-
-1.  Django >= 1.5
+1.  Django 1.5, 1.6
 2. `pycurl <https://pypi.python.org/pypi/pycurl>`_
 3. `certifi <https://pypi.python.org/pypi/certifi>`_
 4. `django_braces <https://pypi.python.org/pypi/django-braces>`_
 5. `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
 6. `Celery <http://www.celeryproject.org/>`_
 
+Required third party libraries are **installed automatically** if you use pip to install django-ftp-deploy.
 
 
 
@@ -34,10 +33,11 @@ Installation
 
         pip install django-ftp-deploy
 
-
-#. Add ``ftp_deploy`` and ``ftp_deploy.server`` to your ``INSTALLED_APPS`` list in your settings
+#. Add ``ftp_deploy`` and ``ftp_deploy.server`` to ``INSTALLED_APPS`` list in your settings file:
 
    .. code-block:: python
+
+    #settings.py
 
     INSTALLED_APPS = (
       ...
@@ -46,9 +46,11 @@ Installation
       ...
     )
 
-#. Add `` "django.core.context_processors.request"`` to your ``TEMPLATE_CONTEXT_PROCESSORS`` list
+#. Add ``django.core.context_processors.request`` to ``TEMPLATE_CONTEXT_PROCESSORS``:
 
    .. code-block:: python
+
+    #settings.py
 
     TEMPLATE_CONTEXT_PROCESSORS = (
       ...
@@ -56,9 +58,11 @@ Installation
       ...
     )
 
-#. Add ``django-ftp-deploy`` to your ``urlpatterns`` list in your urls
+#. Add ``django-ftp-deploy`` to ``urlpatterns``:
 
    .. code-block:: python
+
+        #projectname/urls.py
 
         urlpatterns = patterns('',
             ...
@@ -67,7 +71,7 @@ Installation
             ...
           )
 
-#. Synchronize your database. It is highly recommended you use `south <https://pypi.python.org/pypi/South/>`_ migration tool for future development purposes
+#. Synchronize your database. It is highly recommended you use `south <https://pypi.python.org/pypi/South/>`_ migration tool
 
    .. code-block:: python
 
@@ -84,8 +88,11 @@ Installation
 
 Configuration
 -------------
+* Add folder containing ``settings.py`` file to PYTHONPATH.
 
 * Add ``DEPLOY_BITBUCKET_SETTINGS`` and/or ``DEPLOY_GITHUB_SETTINGS`` configuration to your settings::
+
+    #settings.py
 
     DEPLOY_BITBUCKET_SETTINGS = {
       'username'      : '',
@@ -107,24 +114,24 @@ Configuration
         | *password*: github password
 
 
+
+
 * The FTP Deploy Dashboard **requires** the *bootstrap3* template pack for `django_crispy_forms <https://pypi.python.org/pypi/django-crispy-forms>`_
 
   .. code-block:: python
 
+      #settings.py
       CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
 
   All required template files are included.
 
-* Add celery configuration to your settings::
+* Add celery configuration::
 
+    #settings.py
     BROKER_URL = ''
     CELERY_RESULT_BACKEND=''
     #settings depends on message broker and result backend, see example below
-
-* Replace ``projectname`` in celery file::
-
-    # ftp_deploy/celery.py
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectname.settings')
 
 * Go to root folder of your project and run celery worker as follow::
 
@@ -143,6 +150,7 @@ If you are using Ubuntu or Debian install RabbitMQ by executing this command::
 
 * Add celery configuration to your settings::
 
+    #settings.py
     BROKER_URL = 'amqp://'
     CELERY_RESULT_BACKEND='amqp'
 
@@ -162,6 +170,8 @@ In order to use django as broker and backend, project need to have  `django-cele
 
   .. code-block:: python
 
+   #settings.py
+
    INSTALLED_APPS = (
      ...
      'kombu.transport.django',
@@ -171,6 +181,7 @@ In order to use django as broker and backend, project need to have  `django-cele
 
 * Add celery configuration to your settings::
 
+    #settings.py
     BROKER_URL = 'django://'
     CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
