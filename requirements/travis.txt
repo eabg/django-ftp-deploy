@@ -1,0 +1,5 @@
+pycurl==7.19.0.2
+django-nose==1.2
+factory_boy==2.2.1
+Fabric==1.8.0
+mock==1.0.1
