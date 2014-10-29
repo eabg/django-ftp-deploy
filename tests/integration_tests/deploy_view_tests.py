@@ -6,11 +6,11 @@ from django.conf import settings
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 
+from tests.utils.factories import ServiceFactory, TaskFactory
+from tests.utils.payloads import LoadPayload
 
 from ftp_deploy.utils.ftp import ftp_connection
 from ftp_deploy.models import Service
-from ftp_deploy.tests.utils.factories import ServiceFactory, TaskFactory
-from ftp_deploy.tests.utils.payloads import LoadPayload
 
 
 class DeployViewTest(TestCase):
@@ -59,7 +59,7 @@ class DeployStatusViewTest(TestCase):
         response = self.client.post(reverse('ftpdeploy_deploy_status', kwargs={'secret_key': self.service.secret_key}))
         self.assertEqual(response.content,'{"queue": 0}')
 
-    @patch('ftp_deploy.views.AsyncResult')    
+    @patch('ftp_deploy.views.AsyncResult')
     def test_service_status_with_queue_call_async_result_and_return_json(self, mock_async_result):
         task = TaskFactory(service=self.service)
         result =  MagicMock(name='results',result=dict(result=22,file='file1.txt'), return_value=22)
@@ -68,4 +68,3 @@ class DeployStatusViewTest(TestCase):
 
         mock_async_result.has_calls([call(u'factory_name_1')])
         self.assertEqual(response.content,'{"queue": 1, "result": 22, "file": "file1.txt"}')
-

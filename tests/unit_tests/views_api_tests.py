@@ -5,11 +5,11 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
+from tests.utils.cbv import setup_view
+from tests.utils.factories import ServiceFactory
 
 from ftp_deploy.conf import *
-from ftp_deploy.tests.utils.cbv import setup_view
 from ftp_deploy.server.views import RepoAPIView
-from ftp_deploy.tests.utils.factories import ServiceFactory
 
 
 class RepoAPIViewTest(TestCase):

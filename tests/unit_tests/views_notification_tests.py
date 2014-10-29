@@ -7,14 +7,15 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
+from tests.utils.cbv import setup_view
+from tests.utils.factories import NotificationFactory
+
 from ftp_deploy.conf import *
-from ftp_deploy.tests.utils.cbv import setup_view
 from ftp_deploy.server.views import NotificationView, NotificationAddView, NotificationEditView, NotificationDeleteView
 from ftp_deploy.server.views import DashboardView
 
 
 from ftp_deploy.server.forms import NotificationForm
-from ftp_deploy.tests.utils.factories import NotificationFactory
 from ftp_deploy.models import Log, Service, Notification
 
 

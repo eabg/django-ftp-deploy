@@ -11,4 +11,4 @@ COVERAGE_MODULE_EXCLUDES = [
 
 COVERAGE_MODULE_EXCLUDES += DJANGO_APPS + THIRD_PARTY_APPS
 COVERAGE_REPORT_HTML_OUTPUT_DIR = join(
-    dirname(dirname(__file__)), 'django-ftp-deploy/ftp_deploy/tests/coverage')
+    dirname(dirname(__file__)), 'tests/coverage')

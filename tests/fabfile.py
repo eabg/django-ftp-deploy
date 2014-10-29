@@ -3,14 +3,14 @@ from fabric.api import local
 
 def test():
     """All Tests"""
-    local("django-admin.py test ftp_deploy \
-          --settings=ftp_deploy.tests.conf.conf --exe")
+    local("django-admin.py test tests \
+          --settings=tests.conf.conf --exe")
 
 
 def testc():
     """All Tests with coverage"""
-    local("django-admin.py test ftp_deploy \
-          --settings=ftp_deploy.tests.conf.confc --exe")
+    local("django-admin.py test tests \
+          --settings=tests.conf.confc --exe")
 
 
 def testu(module=''):
@@ -18,9 +18,9 @@ def testu(module=''):
     if module:
         module = '.tests.unit_tests.%s' % module
 
-    local("django-admin.py test ftp_deploy%s \
+    local("django-admin.py test tests%s \
           --exclude=integration_tests --exclude==external_tests \
-          --settings=ftp_deploy.tests.conf.conf --exe" % module)
+          --settings=tests.conf.conf --exe" % module)
 
 
 def testi(module=''):
@@ -28,6 +28,6 @@ def testi(module=''):
     if module:
         module = '.tests.integration_tests.%s' % module
 
-    local("django-admin.py test ftp_deploy%s \
+    local("django-admin.py test tests%s \
           --exclude=external_tests --exclude=unit_tests  \
-          --settings=ftp_deploy.tests.conf.conf --exe" % module)
+          --settings=tests.conf.conf --exe" % module)

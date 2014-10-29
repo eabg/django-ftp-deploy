@@ -8,7 +8,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from ftp_deploy.tests.utils.factories import AdminUserFactory, ServiceFactory, LogFactory, NotificationFactory
+from tests.utils.factories import AdminUserFactory, ServiceFactory, LogFactory, NotificationFactory
+
 from ftp_deploy.models import Service
 
 

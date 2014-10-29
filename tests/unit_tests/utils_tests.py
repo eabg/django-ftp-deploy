@@ -11,6 +11,8 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
+from tests.utils.factories import ServiceFactory, LogFactory, NotificationFactory
+
 from ftp_deploy.conf import *
 from ftp_deploy.models import Log
 from ftp_deploy.utils.decorators import check
@@ -19,9 +21,8 @@ from ftp_deploy.utils.repo import commits_parser, repository_api
 from ftp_deploy.utils.email import notification_success, notification_fail
 from ftp_deploy.utils.ftp import ftp_check, ftp_connection
 from ftp_deploy.utils.curl import curl_connection
-
-from ftp_deploy.tests.utils.factories import ServiceFactory, LogFactory, NotificationFactory
 from ftp_deploy.models.service import Service
+
 
 
 class UtilsDecoratorCheckTest(TestCase):

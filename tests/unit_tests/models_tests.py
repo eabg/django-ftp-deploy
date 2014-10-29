@@ -6,7 +6,8 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
-from ftp_deploy.tests.utils.factories import ServiceFactory, NotificationFactory, LogFactory, TaskFactory
+from tests.utils.factories import ServiceFactory, NotificationFactory, LogFactory, TaskFactory
+
 from ftp_deploy.models import Log
 
 

@@ -6,9 +6,10 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
-from ftp_deploy.tests.utils.cbv import setup_view
+from tests.utils.cbv import setup_view
+from tests.utils.factories import AdminUserFactory, LogFactory, ServiceFactory
+
 from ftp_deploy.server.views import LogView, LogSkipDeployView
-from ftp_deploy.tests.utils.factories import AdminUserFactory, LogFactory, ServiceFactory
 from ftp_deploy.models import Log
 
 

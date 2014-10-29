@@ -6,13 +6,14 @@ from mock import PropertyMock
 from mock import patch
 from mock import call
 
-from ftp_deploy.tests.utils.cbv import setup_view
+from tests.utils.cbv import setup_view
+from tests.utils.factories import AdminUserFactory, LogFactory, ServiceFactory
+
 from ftp_deploy.server.views import DashboardView
 from ftp_deploy.server.views import ServiceManageView, ServiceAddView, ServiceEditView, ServiceDeleteView
 from ftp_deploy.server.views import ServiceStatusView, ServiceNotificationView, ServiceRestoreView
 
 from ftp_deploy.server.forms import ServiceNotificationForm, ServiceForm
-from ftp_deploy.tests.utils.factories import AdminUserFactory, LogFactory, ServiceFactory
 from ftp_deploy.models import Service
 
 
@@ -336,7 +337,7 @@ class ServiceRestoreViewTest(TestCase):
         get_object = MagicMock(name='get_object',secret_key='abc123', lock=lambda: False)
         mock_object.return_value = get_object
         response = view.post(view.request)
-        
+
         self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}), response.__str__())
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
