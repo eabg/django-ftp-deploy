@@ -3,12 +3,12 @@ Usage
 
 Using the django-ftp-deploy module
 
-.. note:: For full functionality you need to have *FTP Deploy Server* installed in your project, otherwise you can manage your deploys in admin page. For further informations visit :ref:`installation <installation>` section. 
+.. note:: For full functionality you need to have *FTP Deploy Server* installed in your project, otherwise you can manage your deploys in admin page. For further informations visit :ref:`installation <installation>` section.
 
 .. important:: It's important to always use **non fast forward** git merge to your deploy branch! Otherwise POST Hook has no information about commits included in merge.
-    
+
   .. code-block:: python
-  
+
       git merge --no-ff
 
 
@@ -50,7 +50,7 @@ To add new service click ``Add Service`` button on the *Service* dashboard page 
 The ``Add Service`` form includes sections with fields listed below. Please read the following instructions in order to fill out the form correctly:
 
 ``FTP Settings``
-   
+
    | *Host:* FTP server host
    | *Username:* FTP server username
    | *Password:* FTP server password
@@ -62,14 +62,14 @@ The ``Add Service`` form includes sections with fields listed below. Please read
    | *Respository Name:* Name of the repository to deploy. After you choose source, the list is populated dynamically from your repository account
    | *Respository Slug:* Slug of your Repository Name. This field is populated *dynamically* by using 'slugify' on the repository name
    | *Branch*: Branch name for deploy service
-	
+
 ``Notification``
 
-   | *Notification*: Notification set using by service. 
+   | *Notification*: Notification set using by service.
 
-``Secutiry``
+``Security``
 
-   | *Security Key*: 30 character alpha-numeric, unique, random generated string. Security Key is used to create repository hook. 
+   | *Security Key*: 30 character alpha-numeric, unique, random generated string. Security Key is used to create repository hook.
 
 
 During saving process, all values are validated. The following checks are performed.
@@ -94,14 +94,14 @@ Manage Service
 --------------
 
 To manage a service click the ``Manage`` button next to the service name or visit::
-	
+
 	/ftpdeploy/service/{service_id}/manage
 
 
 The manage page contains sections such as:
 
-* Statistics of service 
-  
+* Statistics of service
+
   | - POST Hook status (if not set up, ``Add Hook`` link is provided)
   | - number of success deploys
   | - number of fail deploys if exists
@@ -109,21 +109,21 @@ The manage page contains sections such as:
   | - last deploy user
   | - last deploy date
 
-* Notification 
-   
+* Notification
+
   Represent current notification settings. You can change notification by clicking ``Cog icon``
 
 
-*  Status 
-   
+*  Status
+
    Icon representing current status. If validation passes, it displays date of the latest status check, otherwise list of issues. In order to refresh the status you need to click *status icon* (the same applies for services list on dashboard page) or edit and save service.
 
    .. note:: Status is not refreshed automatically because of expense of validation process. Usually takes up to 15 seconds to go through all validation points.
 
-   
+
 * Restore Deploys (if any of deploys has failed)
-  
-  List of failing deploys for service in chronological order. The list provides the following details: 
+
+  List of failing deploys for service in chronological order. The list provides the following details:
 
   | - Deploy date
   | - Deploy user
@@ -133,9 +133,9 @@ The manage page contains sections such as:
 
   If the list contain deploys that you don't want to restore you can skip them by clicking the ``Skip`` button assigned to the failed deployment.
 
-  .. warning:: **Skipping deploys may cause inconsistent data between your repository and FTP files or may fail to restore deploys**. 
-   
-   *Example*: if you skip a deploy with commit that creates a new file, and next deployment include commit that attempts to remove this file, the entire restore process would fail because of trying remove a file that actually doesn't exist. 
+  .. warning:: **Skipping deploys may cause inconsistent data between your repository and FTP files or may fail to restore deploys**.
+
+   *Example*: if you skip a deploy with commit that creates a new file, and next deployment include commit that attempts to remove this file, the entire restore process would fail because of trying remove a file that actually doesn't exist.
 
 
 
@@ -144,7 +144,7 @@ The manage page contains sections such as:
 
 
 * Recent Deploys
-  
+
   List of recent deploys. List mirror `Logs`_ filtered by current service.
 
 
@@ -152,10 +152,10 @@ The manage page contains sections such as:
 
 
 Edit Service
-------------  
+------------
 
 To edit service click ``Edit`` button next to the service name or visit::
-  
+
   /ftpdeploy/service/{service_id}/edit
 
 Edit page provides the same functionality as the `Add Service`_ page. If you need to load list of your repositories again, you need to reset *Source* drop down list, and choose option again.
@@ -182,7 +182,7 @@ The restoring process works as follows:
 In order to restore deploys you need to click ``Restore Deploys`` on `Manage Service`_ page. That will bring the popup window with information about the restore such as :
 
  | - Number of commits included in restore along with details (commit message, commit user, raw node)
- | - File diff (New Files, Modified Files, Removed Files)  
+ | - File diff (New Files, Modified Files, Removed Files)
 
 To run restore process you need to press ``Restore`` button.
 
@@ -210,7 +210,7 @@ You can add emails as many as you like and choose what kind of notification they
 
 
 In order to edit notification you can click ``Edit`` button next to notification name or visit::
-  
+
   /ftpdeploy/{notification_id}/edit
 
 
@@ -253,7 +253,7 @@ In order to see logs page you need to click ``Log`` button on the top of the pag
 
   /ftpdeploy/log
 
-Logs provide information about all activity in the FTP Deploy application. 
+Logs provide information about all activity in the FTP Deploy application.
 
 In addition log list contain information about number of commits included in deploy. If you need to see more details about included commits, you can click the ``commits number`` (commit message, commit user, raw node).
 
