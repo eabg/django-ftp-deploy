@@ -23,6 +23,12 @@ def testu(module=''):
           --settings=tests.conf.conf --exe" % module)
 
 
+def testci():
+    """Travis CI Tests"""
+    local("django-admin.py test tests \
+          --exclude=integration_tests --exclude==external_tests \
+          --settings=tests.conf.travis --exe")
+
 def testi(module=''):
     """Integration Tests"""
     if module:
