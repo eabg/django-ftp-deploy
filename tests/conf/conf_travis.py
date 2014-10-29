@@ -1,8 +1,3 @@
-import logging
-
-selenium_logger = logging.getLogger(
-    'selenium.webdriver.remote.remote_connection')
-selenium_logger.setLevel(logging.ERROR)
 
 SECRET_KEY = 'django-ftp-deploy'
 
@@ -32,13 +27,7 @@ DJANGO_APPS = (
 )
 
 THIRD_PARTY_APPS = (
-    'crispy_forms',
-    'braces',
-    'south',
     'django_nose',
-    'django_coverage',
-    'djcelery',
-    'kombu.transport.django',
 )
 
 LOCAL_APPS = (
