@@ -6,7 +6,7 @@ env:
 install:
   - pip install Django==$DJANGO_VERSION
   - pip install -r requirements/travis.txt
-  - export PYTHONPATH=$PYTHONPATH:/django-ftp-deploy/
+  - export PYTHONPATH=${TRAVIS_BUILD_DIR}+'/django-ftp-deploy/'
 script:
   - cd tests
   - fab testci
