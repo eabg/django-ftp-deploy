@@ -1,8 +1,6 @@
 Usage
 =====
 
-Using the django-ftp-deploy module
-
 .. note:: For full functionality you need to have *FTP Deploy Server* installed in your project, otherwise you can manage your deploys in admin page. For further informations visit :ref:`installation <installation>` section.
 
 .. important:: It's important to always use **non fast forward** git merge to your deploy branch! Otherwise POST Hook has no information about commits included in merge.
@@ -27,10 +25,10 @@ The Main **Dashboard** page is available at::
 
 	/ftpdeploy/dashboard/
 
-| The dashboard allows you to manage all of your services from one page. All failing services are placed on the top of the list, to make it easy to find all services containing issues.
+| The dashboard allows you to manage all of your services from one page. All failing services are placed on the top of the list, to make easy navigate to failed deploys.
 | A screenshot is available in the :ref:`Other <other>` section.
 
-| If service is currently deploying, status icon is change to animated cog.
+| If service is deploying, status icon is changed to animated cog.
 
 
 Service
@@ -72,7 +70,7 @@ The ``Add Service`` form includes sections with fields listed below. Please read
    | *Security Key*: 30 character alpha-numeric, unique, random generated string. Security Key is used to create repository hook.
 
 
-During saving process, all values are validated. The following checks are performed.
+During saving process, all values are validated. The following checks are performed:
 
 * FTP hostname
 * FTP login credentials
@@ -131,16 +129,14 @@ The manage page contains sections such as:
   | - Restorable flag
   | - Status
 
-  If the list contain deploys that you don't want to restore you can skip them by clicking the ``Skip`` button assigned to the failed deployment.
+  If the list contain deploys that you don't want to restore you can skip them by clicking the ``Skip`` button.
 
   .. warning:: **Skipping deploys may cause inconsistent data between your repository and FTP files or may fail to restore deploys**.
 
    *Example*: if you skip a deploy with commit that creates a new file, and next deployment include commit that attempts to remove this file, the entire restore process would fail because of trying remove a file that actually doesn't exist.
 
 
-
-  The entire process of restore failed deploys is described in the `Restore Failed Deploys`_ section.
-
+  Restoring deploys is described in the `Restore Failed Deploys`_ section.
 
 
 * Recent Deploys
@@ -167,7 +163,7 @@ After you press submit, service data goes through the validation process again, 
 Restore Failed Deploys
 ----------------------
 
-If any deploy fails, the service has an opportunity to restore them. It's possible by capturing payload data from POST Hook and storing the data before a deployment is performed.
+If some deploy has failed, the service has an opportunity to restore it. It's possible by capturing payload data from POST Hook and storing the data before a deployment is performed.
 The restoring process works as follows:
 
 ``Restoring process``
@@ -176,7 +172,7 @@ The restoring process works as follows:
  | - Built the restore tree, since first fail deploy up to the most recent deploy (omit skip deploys)
  | - Build new payload data based on restore tree
  | - Build commits information and files diff from new payload
- | - After click restore send new payload to deploy (as it would be a normal POST Hook), remove deploys included in restore, and store new payload.
+ | - After click restore send new payload to deploy (as it would be a normal POST Hook), remove old deploys included in restore, and store new payload.
 
 
 In order to restore deploys you need to click ``Restore Deploys`` on `Manage Service`_ page. That will bring the popup window with information about the restore such as :
@@ -186,7 +182,7 @@ In order to restore deploys you need to click ``Restore Deploys`` on `Manage Ser
 
 To run restore process you need to press ``Restore`` button.
 
-.. note:: If your restore keep failing you can manage this manually. As you never lose deploys and commits information you can rely on *File diff*  even after fail restore. You can just transfer and remove all relevant files included in *File diff* and skip all failed deploys. That help you to keep your data consistent if restore fails.
+.. note:: If your restore keep failing you can manage this manually. As you never lose deploys and commits information you can rely on *File diff*  even after failed restore. You can just transfer and remove all relevant files included in *File diff* and skip all failed deploys. That help you keep your data consistent.
 
 
 

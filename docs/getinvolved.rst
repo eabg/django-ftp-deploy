@@ -7,7 +7,7 @@ Introduction
 
     git clone https://bitbucket.org/lpakula/django-ftp-deploy.git
 
-#. Add ``django-ftp-deploy`` folder to PYTHONPATH:
+#. Add ``django-ftp-deploy`` folder to your Python path
 
 #. Install application as described in :ref:`installation <installation>` section.
 
@@ -40,7 +40,7 @@ Testing
 
 Application use `Nose <https://nose.readthedocs.org/en/latest/>`_ as test runner and  `Fabric <http://docs.fabfile.org/en/1.8/>`_ library to automate testing process.
 
-In order to run tests go into *ftp_deploy/tests* directory and then:
+In order to run tests go into *tests* directory and:
 
 
 * *all* tests::
