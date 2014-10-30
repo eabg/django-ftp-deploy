@@ -53,5 +53,3 @@ SOUTH_TESTS_MIGRATE = True
 DEFAULT_FILE_STORAGE = "inmemorystorage.InMemoryStorage"
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-
