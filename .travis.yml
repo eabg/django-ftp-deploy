@@ -5,7 +5,8 @@ env:
     - DJANGO_VERSION=1.5.11
 install:
   - pip install Django==$DJANGO_VERSION
-  - pip install -r requirements/travis.txt --use-mirrors
+  - pip install -r requirements/travis.txt
+  - export PYTHONPATH=$PYTHONPATH:/django-ftp-deploy/
 script:
   - cd tests
   - fab testci
