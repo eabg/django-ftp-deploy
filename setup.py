@@ -8,7 +8,6 @@ setup(
     packages=[
         'ftp_deploy',
         'ftp_deploy.migrations',
-        'ftp_deploy.tests',
         'ftp_deploy.models',
         'ftp_deploy.utils',
         'ftp_deploy.server',
