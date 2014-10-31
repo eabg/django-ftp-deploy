@@ -1,7 +1,7 @@
 django-ftp-deploy
 =================
 
-.. image:: https://travis-ci.org/lpakula/django-ftp-deploy.svg?branch=dev
+.. image:: https://travis-ci.org/lpakula/django-ftp-deploy.svg?branch=master
     :target: https://travis-ci.org/lpakula/django-ftp-deploy
 
 .. image:: https://pypip.in/download/django-ftp-deploy/badge.svg
