@@ -5,6 +5,11 @@ ROOT_URLCONF = 'tests.conf.urls'
 
 STATIC_URL = '/static/'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+BROKER_URL = 'django://'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -27,7 +32,13 @@ DJANGO_APPS = (
 )
 
 THIRD_PARTY_APPS = (
+    'crispy_forms',
+    'braces',
+    'south',
     'django_nose',
+    'django_coverage',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 LOCAL_APPS = (
