@@ -11,4 +11,4 @@ install:
 script:
   - export PYTHONPATH=`pwd`:$PYTHONPATH
   - cd tests
-  - fab testci
+  - django-admin.py test tests --exclude='external_tests' --settings=tests.conf.conf_travis --exe
