@@ -1,6 +1,6 @@
 import time
 
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.urlresolvers import reverse
 
 from selenium import webdriver
@@ -13,7 +13,7 @@ from tests.utils.factories import AdminUserFactory, ServiceFactory, LogFactory, 
 from ftp_deploy.models import Service
 
 
-class ViewsTest(LiveServerTestCase):
+class ViewsTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.PhantomJS()
