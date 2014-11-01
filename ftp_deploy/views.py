@@ -3,7 +3,7 @@ import json
 from celery.result import AsyncResult
 
 from django.views.generic.base import View
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -51,5 +51,4 @@ class DeployStatusView(DeployView):
             data = task.result or dict(status=task.state)
 
         data['queue'] = self.service.task_set.all().count()
-        json_data = json.dumps(data)
-        return HttpResponse(json_data, mimetype='application/json')
+        return JsonResponse(data)
