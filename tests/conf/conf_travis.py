@@ -34,7 +34,6 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'crispy_forms',
     'braces',
-    'south',
     'django_nose',
     'django_coverage',
     'djcelery',
@@ -64,7 +63,6 @@ PASSWORD_HASHERS = (
 )
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-SOUTH_TESTS_MIGRATE = True
 DEFAULT_FILE_STORAGE = "inmemorystorage.InMemoryStorage"
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
