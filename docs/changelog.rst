@@ -5,6 +5,19 @@ Changelog
 
 Changelog for django-ftp-deploy module
 
+v1.5
+----
+
+* support for Django 1.7
+* support for Python 3
+
+v1.4.1
+------
+
+* travis integration
+* documentation updates
+* PEP8 updates
+
 v1.4
 ----
 
@@ -32,7 +45,7 @@ v1.2
 ----
 
 * deploying process indicator for services
-* lock restoring option whilst deploy is running 
+* lock restoring option whilst deploy is running
 * catch deploys sended during process another deploy, to be able to restore them (need queuing in addition)
 * login screen for server application
 * add notification per service configuration
@@ -42,6 +55,6 @@ v1.2
 v1.1
 ----
 
-* New rewrite version (doesn't compatibile with version 1.0) 
-  
+* New rewrite version (doesn't compatibile with version 1.0)
+
 

@@ -9,7 +9,7 @@ Installation and requirements for django-ftp-deploy module
 Requirements
 ------------
 
-#.  Django 1.5, 1.6
+#.  Django 1.7
 #. `celery <http://www.celeryproject.org/>`_
 #. `pycurl <https://pypi.python.org/pypi/pycurl>`_
 #. `certifi <https://pypi.python.org/pypi/certifi>`_
@@ -70,7 +70,7 @@ Installation
             ...
           )
 
-#. Synchronize your database. It is highly recommended you use `south <https://pypi.python.org/pypi/South/>`_ migration tool
+#. Synchronize your database:
 
    .. code-block:: python
 
@@ -169,7 +169,7 @@ In order to use django as broker and backend, project need to have  `django-cele
     BROKER_URL = 'django://'
     CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
-* Synchronize your database using `south <https://pypi.python.org/pypi/South/>`_::
+* Synchronize your database::
 
     python manage.py migrate djcelery
     python manage.py migrate kombu.transport.django
