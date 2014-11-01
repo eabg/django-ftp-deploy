@@ -35,7 +35,7 @@ class Service(models.Model):
     repo_hook = models.BooleanField(default=False)
 
     secret_key = models.CharField('Secret Key', unique=True, max_length=30,
-                                  default=lambda: ''.join(random.choice(
+                                  default=''.join(random.choice(
                                       string.letters + string.digits) for x in range(30)))
 
     status = models.BooleanField(default=True)
