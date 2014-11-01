@@ -81,7 +81,7 @@ class Service(models.Model):
     def has_queue(self):
         return self.task_set.all().exists()
 
-    def check(self, **kwargs):
+    def validate(self, **kwargs):
 
         message = list()
         fails, message = service_check(self).check_all()

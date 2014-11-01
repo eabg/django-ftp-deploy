@@ -85,7 +85,7 @@ class Deploy(object):
 
         finally:
             self.ftp.quit()
-            self.service.check()
+            self.service.validate()
             self.service.save()
             self.task.delete()
 

@@ -67,7 +67,7 @@ class ServiceAddView(LoginRequiredMixin, CreateView):
         return super(ServiceAddView, self).form_valid(form)
 
     def get_success_url(self):
-        self.object.check()
+        self.object.validate()
         self.object.save()
         return reverse('ftpdeploy_service_manage',
                        kwargs={'pk': self.object.pk})
@@ -81,7 +81,7 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
     template_name = "ftp_deploy/service/form.html"
 
     def form_valid(self, form):
-        self.object.check()
+        self.object.validate()
         self.object.save()
         messages.add_message(self.request, messages.SUCCESS,
                              'Service has been updated.')
@@ -115,7 +115,7 @@ class ServiceStatusView(JSONResponseMixin, LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         service = self.get_object()
-        service.check()
+        service.validate()
         service.save()
         response = request.POST.get('response', '')
 
