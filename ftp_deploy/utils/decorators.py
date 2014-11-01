@@ -16,7 +16,7 @@ class check(object):
         def wrapped(*args):
             try:
                 fn(*args)
-            except Exception, e:
+            except Exception as e:
                 return True, '<b>%s:</b> %s' % (self.prefix, e)
             else:
                 return False, ''

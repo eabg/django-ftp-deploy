@@ -35,7 +35,7 @@ class ftp_connection(object):
             current = '/'.join(dirname[:-1 - i])
             try:
                 self.ftp.rmd(self.ftp_path + current)
-            except Exception, e:
+            except Exception:
                 return False
 
     def make_dirs(self, file_path):
@@ -46,7 +46,7 @@ class ftp_connection(object):
             current = '/'.join(dirname[:i + 1])
             try:
                 self.ftp.dir(self.ftp_path + current)
-            except Exception, e:
+            except Exception:
                 self.ftp.mkd(self.ftp_path + current)
 
     def encode(self, content):

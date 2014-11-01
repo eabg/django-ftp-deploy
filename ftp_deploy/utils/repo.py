@@ -49,7 +49,7 @@ class repository_parser(object):
                 url = 'https://bitbucket.org/api/1.0/users/%s/emails' % self.data['user']
                 context = json.loads(curl.perform(url))
                 return [context[0]['email']]
-            except Exception, e:
+            except Exception:
                 return []
         elif self.service_repo == 'gh':
             if self.data['pusher']['name'] == 'Restore':

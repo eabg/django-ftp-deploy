@@ -63,9 +63,9 @@ class Deploy(object):
 
             self.ftp.connect()
 
-        except LockError, e:
+        except LockError as e:
             self.set_fail('Service Locked', e)
-        except Exception, e:
+        except Exception as e:
             self.set_fail('FTP Connection', e)
         else:
             try:
@@ -75,7 +75,7 @@ class Deploy(object):
                 if self.service.repo_source == 'gh':
                     self.perform_github()
 
-            except Exception, e:
+            except Exception as e:
                 self.set_fail(self.user, e)
             else:
                 self.log.user = self.user
