@@ -30,7 +30,6 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'crispy_forms',
     'braces',
-    'south',
     'django_nose',
     'django_coverage',
     'djcelery',
