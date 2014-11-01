@@ -112,7 +112,7 @@ class ServiceAddViewTest(TestCase):
 
         response = view.get_success_url()
 
-        calls = [call.check(), call.save()]
+        calls = [call.validate(), call.save()]
         view.object.assert_has_calls(calls)
 
     def test_service_add_view_redirect_to_service_manage_page_after_success_submit(self):
@@ -154,7 +154,7 @@ class ServiceEditViewTest(TestCase):
         view.get_object = lambda: MagicMock(name='service')
         response = view.post(view.request)
 
-        view.object.assert_has_calls([call.check(), call.save()])
+        view.object.assert_has_calls([call.validate(), call.save()])
 
     def test_service_edit_view_redirect_to_service_dashboard_page_after_success_submit(self):
         view = setup_view(ServiceEditView(), self.get_request, pk=self.service.pk)
@@ -203,7 +203,7 @@ class ServiceStatusViewTest(TestCase):
         except:
             pass
 
-        calls = [call.check(), call.save()]
+        calls = [call.validate(), call.save()]
         service.assert_has_calls(calls)
 
     @patch('ftp_deploy.server.views.ServiceStatusView.get_object')
@@ -243,7 +243,7 @@ class ServiceStatusViewTest(TestCase):
     @patch.object(ServiceManageView, 'get_context_data')
     @patch('ftp_deploy.server.views.ServiceStatusView.get_object')
     def test_service_status_POST_manage_response_context_mirror_service_manage_context(self, mock_object, mock_manage_context):
-        self.service.check = MagicMock()
+        self.service.validate = MagicMock()
         self.service.save = MagicMock()
         mock_object.return_value = self.service
         mock_manage_context.return_value = {'service': self.service, 'manage_context': True}
@@ -257,7 +257,7 @@ class ServiceStatusViewTest(TestCase):
     def test_service_status_POST_json_response_return_proper_json_data(self):
         post_request = RequestFactory().post('/request', {'response': 'json'})
         view = setup_view(ServiceStatusView(), post_request)
-        self.service.check = MagicMock()
+        self.service.validate = MagicMock()
         self.service.save = MagicMock()
         self.service.updated = 'now'
         self.service.status_message = 'status message'

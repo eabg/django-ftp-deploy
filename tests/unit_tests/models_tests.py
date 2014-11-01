@@ -81,14 +81,14 @@ class ServiceTest(TestCase):
     def test_service_check_method(self, mock_service_check):
         """service check method perform check, set repo_hook and status_message"""
         mock_service_check().check_all = MagicMock('check_all', return_value=([True, True, True], ['message1', 'message2']))
-        self.service.check()
+        self.service.validate()
 
         mock_service_check().check_all.assert_called_once_with()
         self.assertEqual(self.service.status_message, 'message1<br>message2')
         self.assertFalse(self.service.repo_hook)
 
         mock_service_check().check_all = MagicMock('check_all', return_value=([False, False, False], []))
-        self.service.check()
+        self.service.validate()
         self.assertEqual(self.service.status_message, '')
         self.assertTrue(self.service.repo_hook)
 
