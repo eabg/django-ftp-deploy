@@ -8,6 +8,8 @@ from ftp_deploy.models import Notification
 
 class NotificationForm(forms.ModelForm):
 
+    fields = ['name', 'success', 'fail', 'commit_user', 'deploy_user']
+
     success = forms.CharField(
         widget=forms.TextInput(
             attrs={'size': '150'}), help_text='Comma separated list of emails',
