@@ -217,7 +217,7 @@ class UtilsCoreLockErrorTest(TestCase):
     def test_lock_error_exception(self):
         try:
             raise LockError()
-        except LockError, e:
+        except LockError as e:
             self.assertEqual(e.__str__(), 'Deploy failed because service is Locked!')
 
 
