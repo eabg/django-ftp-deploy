@@ -362,7 +362,7 @@ class UtilsFTPTest(TestCase):
         self.assertEqual(self.ftp_connection.host, 'host')
         self.assertEqual(self.ftp_connection.username, 'username')
         self.assertEqual(self.ftp_connection.password, 'password')
-        self.assertEqual(self.ftp_connection.ftp_path, 'ftp/path/')
+        self.assertEqual(self.ftp_connection.ftp_path, b'ftp/path/')
         self.assertFalse(self.ftp_connection.connected)
 
     @patch('ftp_deploy.utils.ftp.FTP')
@@ -416,7 +416,7 @@ class UtilsFTPTest(TestCase):
         check.ftp = MagicMock(name='ftp')
         check.check_ftp_path()
 
-        check.ftp.assert_has_calls([call.cwd('ftp/path/')])
+        check.ftp.assert_has_calls([call.cwd(b'ftp/path/')])
 
     def test_ftp_check_all_perform_all_check_stages(self):
         check = ftp_check('host', 'username', 'password', 'ftp/path/')
