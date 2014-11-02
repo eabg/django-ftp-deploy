@@ -30,8 +30,8 @@ class ftp_connection(object):
             and clear empty directories"""
         file_path = self.encode(file_path)
         self.ftp.delete(self.ftp_path + file_path)
-        dirname = file_path.split('/')
-        for i in xrange(len(dirname)):
+        dirname = file_path.decode('utf-8').split('/')
+        for i in range(len(dirname)):
             current = '/'.join(dirname[:-1 - i])
             try:
                 self.ftp.rmd(self.ftp_path + current)
@@ -42,7 +42,7 @@ class ftp_connection(object):
         """ Create FTP tree directories based on 'file_path'"""
         file_path = self.encode(file_path)
         dirname = os.path.dirname(file_path).split('/')
-        for i in xrange(len(dirname)):
+        for i in range(len(dirname)):
             current = '/'.join(dirname[:i + 1])
             try:
                 self.ftp.dir(self.ftp_path + current)
