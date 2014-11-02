@@ -36,7 +36,7 @@ class Service(models.Model):
 
     secret_key = models.CharField('Secret Key', unique=True, max_length=30,
                                   default=''.join(random.choice(
-                                      string.letters + string.digits) for x in range(30)))
+                                      string.ascii_letters + string.digits) for x in range(30)))
 
     status = models.BooleanField(default=True)
     status_message = models.TextField()
