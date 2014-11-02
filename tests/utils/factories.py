@@ -45,7 +45,7 @@ class ServiceFactory(factory.DjangoModelFactory):
 
     @factory.sequence
     def secret_key(n):
-        return ''.join(random.choice(string.letters + string.digits) for x in range(30))
+        return ''.join(random.choice(string.ascii_letters + string.digits) for x in range(30))
 
 
 class LogFactory(factory.DjangoModelFactory):
