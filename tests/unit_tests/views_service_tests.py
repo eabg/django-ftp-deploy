@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
 
@@ -263,9 +265,11 @@ class ServiceStatusViewTest(TestCase):
         self.service.status_message = 'status message'
         view.get_object = MagicMock(return_value=self.service)
         response = view.post(view.request)
+        response = json.loads(response.content)
 
-        self.assertEqual(response.content, '{"status": true, "updated": "now", "status_message": "status message"}')
-
+        self.assertEqual(response['status'], True)
+        self.assertEqual(response['updated'], 'now')
+        self.assertEqual(response['status_message'], 'status message')
 
 class ServiceNotificationViewTest(TestCase):
 
