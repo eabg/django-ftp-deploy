@@ -1,6 +1,10 @@
 import pycurl
 import certifi
-import StringIO
+
+try:
+    import StringIO
+except ImportError:
+    from io import StringIO
 
 
 class curl_connection(object):
