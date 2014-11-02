@@ -40,7 +40,7 @@ class LoginViewTest(TestCase):
         response = view.get(view.request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('ftpdeploy_dashboard'), response.serialize())
+        self.assertIn(reverse('ftpdeploy_dashboard'), response.serialize().decode('utf-8'))
 
     @patch('ftp_deploy.server.views.login.messages')
     @patch('ftp_deploy.server.views.login.authenticate')
@@ -54,7 +54,7 @@ class LoginViewTest(TestCase):
 
         mock_messages.error.assert_has_calls
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('ftpdeploy_login'), response.serialize())
+        self.assertIn(reverse('ftpdeploy_login'), response.serialize().decode('utf-8'))
 
     @patch('ftp_deploy.server.views.login.login_user')
     @patch('ftp_deploy.server.views.login.authenticate')
@@ -87,4 +87,4 @@ class LogoutViewTest(TestCase):
         view = setup_view(logoutView(), self.get_request)
         response = view.get(view.request)
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('ftpdeploy_login'), response.serialize())
+        self.assertIn(reverse('ftpdeploy_login'), response.serialize().decode('utf-8'))

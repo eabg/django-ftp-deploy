@@ -87,5 +87,5 @@ class LogSkipDeployViewTest(TestCase):
         view = setup_view(LogSkipDeployView(), self.post_request, pk=log1.pk)
         response = view.post(view.request)
 
-        response = json.loads(response.content)
+        response = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response['status'], 'success')

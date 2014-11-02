@@ -343,7 +343,7 @@ class ServiceRestoreViewTest(TestCase):
         response = view.post(view.request)
 
         self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}),
-                      response.serialize())
+                      response.content.decode('utf-8'))
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
     def test_service_POST_request_return_status_500_if_service_lock(self, mock_object):
