@@ -10,7 +10,7 @@ class ftp_connection(object):
         self.host = host
         self.username = username
         self.password = password
-        self.ftp_path = self.encode(ftp_path)
+        self.ftp_path = self.encode(ftp_path).decode('utf-8')
         self.connected = 0
 
     def connect(self):
@@ -22,14 +22,14 @@ class ftp_connection(object):
     def create_file(self, file_path, content):
         """Create file populated with 'content'
             and save to 'file_path' location"""
-        file_path = self.encode(file_path)
+        file_path = self.encode(file_path).decode('utf-8')
         self.ftp.storbinary('STOR ' + self.ftp_path + file_path, content)
 
     def remove_file(self, file_path):
         """Remove file from 'file_path' location,
             and clear empty directories"""
         file_path = self.encode(file_path)
-        self.ftp.delete(self.ftp_path + file_path)
+        self.ftp.delete(self.ftp_path + file_path.decode('utf-8'))
         dirname = file_path.decode('utf-8').split('/')
         for i in range(len(dirname)):
             current = '/'.join(dirname[:-1 - i])
@@ -41,7 +41,7 @@ class ftp_connection(object):
     def make_dirs(self, file_path):
         """ Create FTP tree directories based on 'file_path'"""
         file_path = self.encode(file_path)
-        dirname = os.path.dirname(file_path).split('/')
+        dirname = os.path.dirname(file_path).decode('utf-8').split('/')
         for i in range(len(dirname)):
             current = '/'.join(dirname[:i + 1])
             try:
