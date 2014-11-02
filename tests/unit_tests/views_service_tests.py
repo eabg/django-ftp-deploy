@@ -265,7 +265,7 @@ class ServiceStatusViewTest(TestCase):
         self.service.status_message = 'status message'
         view.get_object = MagicMock(return_value=self.service)
         response = view.post(view.request)
-        response = json.loads(response.content)
+        response = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(response['status'], True)
         self.assertEqual(response['updated'], 'now')
@@ -342,7 +342,8 @@ class ServiceRestoreViewTest(TestCase):
         mock_object.return_value = get_object
         response = view.post(view.request)
 
-        self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}), response.__str__())
+        self.assertIn(reverse('ftpdeploy_deploy', kwargs={'secret_key': get_object.secret_key}),
+                      response.serialize())
 
     @patch('ftp_deploy.server.views.service.ServiceRestoreView.get_object')
     def test_service_POST_request_return_status_500_if_service_lock(self, mock_object):
