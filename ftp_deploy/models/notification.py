@@ -23,7 +23,7 @@ class Notification(models.Model):
         for email in self.get_fail():
             try:
                 emails[email]['fail'] = True
-            except KeyError, e:
+            except KeyError:
                 emails[email] = dict()
                 emails[email]['fail'] = True
 
