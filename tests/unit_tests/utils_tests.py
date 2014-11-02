@@ -130,9 +130,16 @@ class UtilsRepoAPI(TestCase):
         api.curl = MagicMock(name="mock_curl")
         api.add_hook(self.service_gh, MagicMock(name='request', return_value='request'))
 
-        calls = [call.perform_post('https://api.github.com/repos/%s/%s/hooks' % (
-            GITHUB_SETTINGS['username'], self.service_gh.repo_slug_name), '{"active": true, "config": {"url": "build%s", "content_type": "json"}, "name": "web"}' % (self.service_gh.hook_url()))]
-        api.curl.assert_has_calls(calls)
+        json_call = json.loads(api.curl.mock_calls[0][1][1])
+        url_call = api.curl.mock_calls[0][1][0]
+
+        self.assertEqual(url_call, 'https://api.github.com/repos/%s/%s/hooks' % (
+            GITHUB_SETTINGS['username'], self.service_gh.repo_slug_name))
+
+        self.assertEqual(json_call['name'],'web')
+        self.assertEqual(json_call['active'], True)
+        self.assertEqual(json_call['config']['url'], 'build%s' % self.service_gh.hook_url())
+        self.assertEqual(json_call['config']['content_type'],'json')
 
 
 class UtilsCoreServiceCheckTest(TestCase):
