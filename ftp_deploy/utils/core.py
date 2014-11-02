@@ -1,7 +1,150 @@
 
+import json
+import pycurl
+
 from .ftp import ftp_check
-from .repo import bitbucket_check, github_check
+from .decorators import check
+from .curl import curl_connection
 from ftp_deploy.conf import *
+
+
+class bitbucket_check(curl_connection):
+
+    """Bitbucket check class contain all checking points for bitbucket,
+        return True if fail"""
+
+    def __init__(self, username, password, service):
+        super(bitbucket_check, self).__init__(username, password)
+        self.service = service
+
+    @check('Bitbucket')
+    def check_authentication(self):
+        self.authenticate()
+        self.perform('https://bitbucket.org/api/1.0/user/repositories')
+        if self.curl.getinfo(pycurl.HTTP_CODE) != 200:
+            raise Exception("Login Fail")
+
+    @check('Bitbucket')
+    def check_repo_exist(self):
+        self.authenticate()
+        repos = json.loads(self.perform('https://bitbucket.org/api/1.0/user/repositories'))
+        for repo in repos:
+            if repo['slug'] == self.service.repo_slug_name:
+                return False, ''
+        raise Exception("Repository %s doesn't exist" %
+                        self.service.repo_slug_name)
+
+    @check('Bitbucket')
+    def check_branch_exist(self):
+        self.authenticate()
+        url = 'https://bitbucket.org/api/1.0/repositories/%s/%s/branches' % (
+            self.username, self.service.repo_slug_name)
+        branches = json.loads(self.perform(url))
+        try:
+            branches[self.service.repo_branch]
+        except KeyError:
+            raise Exception("Branch %s doesn't exist" %
+                            self.service.repo_branch)
+
+    @check('Bitbucket')
+    def check_hook_exist(self):
+        self.authenticate()
+        url = 'https://bitbucket.org/api/1.0/repositories/%s/%s/services' % (
+            self.username, self.service.repo_slug_name)
+        hooks = json.loads(self.perform(url))
+
+        if type(hooks) == list:
+            for hook in hooks:
+                if len(hook['service']['fields']) > 0:
+                    value = hook['service']['fields'][0]['value']
+                    if (value.find(str(self.service.hook_url())) != -1
+                            and hook['service']['type'] == 'POST'):
+                        return False, ''
+        raise Exception("Hook is not set up")
+
+    def check_all(self):
+        status = self.check_authentication()
+        if status[0] is True:
+            return status
+
+        status = self.check_repo_exist()
+        if status[0] is True:
+            return status
+
+        status = self.check_branch_exist()
+        if status[0] is True:
+            return status
+
+        return False, ''
+
+
+class github_check(curl_connection):
+
+    """Bitbucket check class contain all checking points for bitbucket,
+        return True if fail"""
+
+    def __init__(self, username, password, service):
+        super(github_check, self).__init__(username, password)
+        self.service = service
+
+    @check('Github')
+    def check_authentication(self):
+        self.authenticate()
+        self.perform('https://api.github.com/user/repos')
+        if self.curl.getinfo(pycurl.HTTP_CODE) != 200:
+            raise Exception("Login Fail")
+
+    @check('Github')
+    def check_repo_exist(self):
+        self.authenticate()
+        repos = json.loads(self.perform('https://api.github.com/user/repos'))
+        for repo in repos:
+            if repo['name'] == self.service.repo_slug_name:
+                return False, ''
+        raise Exception("Repository %s doesn't exist" %
+                        self.service.repo_slug_name)
+
+    @check('Github')
+    def check_branch_exist(self):
+        self.authenticate()
+        url = 'https://api.github.com/repos/%s/%s/branches' % (
+            self.username, self.service.repo_slug_name)
+        branches = json.loads(self.perform(url))
+        for branch in branches:
+            if branch['name'] == self.service.repo_branch:
+                return False, ''
+        raise Exception("Branch %s doesn't exist" % self.service.repo_branch)
+
+    @check('Github')
+    def check_hook_exist(self):
+        self.authenticate()
+        url = 'https://api.github.com/repos/%s/%s/hooks' % (
+            self.username, self.service.repo_slug_name)
+        hooks = json.loads(self.perform(url))
+
+        if type(hooks) == list:
+            for hook in hooks:
+                value = hook['config']['url']
+                if (value.find(str(self.service.hook_url())) != -1
+                        and hook['name'] == "web"):
+                    return False, ''
+
+        raise Exception("Hook is not set up")
+
+    def check_all(self):
+        status = self.check_authentication()
+        if status[0] is True:
+            return status
+
+        status = self.check_repo_exist()
+        if status[0] is True:
+            return status
+
+        status = self.check_branch_exist()
+        if status[0] is True:
+            return status
+
+        return False, ''
 
 
 class service_check(object):
