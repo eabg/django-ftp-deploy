@@ -30,10 +30,10 @@ class Notification(models.Model):
         return emails
 
     def get_success(self):
-        return filter(None, self.success.split(','))
+        return list(filter(None, self.success.split(',')))
 
     def get_fail(self):
-        return filter(None, self.fail.split(','))
+        return list(filter(None, self.fail.split(',')))
 
     def commit_user_success(self):
         return True if '0' in self.commit_user else False
