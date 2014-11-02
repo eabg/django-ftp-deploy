@@ -24,7 +24,6 @@ from ftp_deploy.utils.curl import curl_connection
 from ftp_deploy.models.service import Service
 
 
-
 class UtilsDecoratorCheckTest(TestCase):
 
     def test_utils_decorator_check_exception_output(self):
