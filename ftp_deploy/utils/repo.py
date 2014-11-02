@@ -1,7 +1,7 @@
 import json
 import re
 
-import core
+from .core import absolute_url
 from .curl import curl_connection
 from ftp_deploy.conf import *
 
@@ -96,7 +96,7 @@ class repository_api(object):
         if(self.service_repo == 'bb'):
             url = 'https://api.bitbucket.org/1.0/repositories/%s/%s/services/' % (
                 self.username, service.repo_slug_name)
-            post = 'type=POST&URL=%s%s' % (core.absolute_url(request).build(),
+            post = 'type=POST&URL=%s%s' % (absolute_url(request).build(),
                                            service.hook_url())
         elif(self.service_repo == 'gh'):
             url = 'https://api.github.com/repos/%s/%s/hooks' % (
@@ -106,7 +106,7 @@ class repository_api(object):
                 "name": 'web',
                 "active": True,
                 "config": {
-                    "url": '%s%s' % (core.absolute_url(request).build(),
+                    "url": '%s%s' % (absolute_url(request).build(),
                                      service.hook_url()),
                     "content_type": "json"
                 }
