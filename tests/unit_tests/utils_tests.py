@@ -106,12 +106,12 @@ class UtilsRepoAPI(TestCase):
         api.repositories()
         api.curl.assert_has_calls([call.perform('https://api.github.com/user/repos')])
 
-    @patch('ftp_deploy.utils.repo.core')
+    @patch('ftp_deploy.utils.repo.absolute_url')
     @patch('ftp_deploy.utils.repo.curl_connection')
-    def test_repo_add_hook_bb_use_proper_url(self, mock_curl_connection, mock_core):
+    def test_repo_add_hook_bb_use_proper_url(self, mock_curl_connection, mock_absolute_url):
         absolute_url = MagicMock(name='absolute_url')
         absolute_url.build = MagicMock(return_value='build')
-        mock_core.absolute_url = MagicMock(name='absolute_url', return_value=absolute_url)
+        mock_absolute_url.return_value = absolute_url
         api = repository_api(self.service_bb.repo_source)
         api.curl = MagicMock(name="mock_curl")
         api.add_hook(self.service_bb, MagicMock(name='request', return_value='request'))
@@ -120,12 +120,12 @@ class UtilsRepoAPI(TestCase):
             BITBUCKET_SETTINGS['username'], self.service_bb.repo_slug_name), 'type=POST&URL=build/ftpdeploy/deploy/%s' % (self.service_bb.secret_key))]
         api.curl.assert_has_calls(calls)
 
-    @patch('ftp_deploy.utils.repo.core')
+    @patch('ftp_deploy.utils.repo.absolute_url')
     @patch('ftp_deploy.utils.repo.curl_connection')
-    def test_repo_add_hook_gh_use_proper_url(self, mock_curl_connection, mock_core):
+    def test_repo_add_hook_gh_use_proper_url(self, mock_curl_connection, mock_absolute_url):
         absolute_url = MagicMock(name='absolute_url')
         absolute_url.build = MagicMock(return_value='build')
-        mock_core.absolute_url = MagicMock(name='absolute_url', return_value=absolute_url)
+        mock_absolute_url.return_value = absolute_url
         api = repository_api(self.service_gh.repo_source)
         api.curl = MagicMock(name="mock_curl")
         api.add_hook(self.service_gh, MagicMock(name='request', return_value='request'))
