@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
 
@@ -85,4 +87,5 @@ class LogSkipDeployViewTest(TestCase):
         view = setup_view(LogSkipDeployView(), self.post_request, pk=log1.pk)
         response = view.post(view.request)
 
-        self.assertEqual('{"status": "success"}', response.content)
+        response = json.loads(response.content)
+        self.assertEqual(response['status'], 'success')
