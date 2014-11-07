@@ -1,5 +1,11 @@
+
+import json
 from ftplib import FTP
-import StringIO
+
+try:
+    import StringIO
+except ImportError:
+    from io import StringIO
 from mock import MagicMock, PropertyMock, patch, call
 
 from django.conf import settings

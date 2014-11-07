@@ -1,5 +1,9 @@
 from ftplib import FTP
-import StringIO
+
+try:
+    import StringIO
+except ImportError:
+    from io import StringIO
 
 from django.conf import settings
 from django.test import TestCase, Client
