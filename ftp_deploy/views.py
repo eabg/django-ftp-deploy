@@ -28,8 +28,8 @@ class DeployView(View):
         return super(DeployView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        json_string = request.POST['payload'].decode(
-            'string_escape').replace('\n', '')
+        json_string = bytes(request.POST['payload'], 'utf-8').decode(
+            'unicode_escape').replace('\n', '')
         data = json.loads(json_string)
 
         if(repository_parser(data, self.service).check_branch()):

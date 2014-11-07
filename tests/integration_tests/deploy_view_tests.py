@@ -63,7 +63,7 @@ class DeployStatusViewTest(TestCase):
 
     def test_service_without_queue_return_count_0(self):
         response = self.client.post(reverse('ftpdeploy_deploy_status', kwargs={'secret_key': self.service.secret_key}))
-        content = json.loads(response.content)
+        content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(content['queue'], 0)
 
     @patch('ftp_deploy.views.AsyncResult')
@@ -75,7 +75,7 @@ class DeployStatusViewTest(TestCase):
 
         mock_async_result.has_calls([call(u'factory_name_1')])
 
-        content = json.loads(response.content)
+        content = json.loads(response.content.decode('utf-8'))
         self.assertEqual(content['queue'], 1)
         self.assertEqual(content['result'], 22)
         self.assertEqual(content['file'], 'file1.txt')
