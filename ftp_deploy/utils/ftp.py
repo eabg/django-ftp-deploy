@@ -10,7 +10,7 @@ class ftp_connection(object):
         self.host = host
         self.username = username
         self.password = password
-        self.ftp_path = self.encode(ftp_path).decode('utf-8')
+        self.ftp_path = self.encode(ftp_path)
         self.connected = 0
 
     def connect(self):
@@ -22,19 +22,19 @@ class ftp_connection(object):
     def create_file(self, file_path, content):
         """Create file populated with 'content'
             and save to 'file_path' location"""
-        file_path = self.encode(file_path).decode('utf-8')
-        self.ftp.storbinary('STOR ' + self.ftp_path + file_path, content)
+        file_path = self.encode(file_path)
+        self.ftp.storbinary(b'STOR ' + self.ftp_path + file_path, content)
 
     def remove_file(self, file_path):
         """Remove file from 'file_path' location,
             and clear empty directories"""
         file_path = self.encode(file_path)
-        self.ftp.delete(self.ftp_path + file_path.decode('utf-8'))
+        self.ftp.delete(self.ftp_path + file_path)
         dirname = file_path.decode('utf-8').split('/')
         for i in range(len(dirname)):
             current = '/'.join(dirname[:-1 - i])
             try:
-                self.ftp.rmd(self.ftp_path + current)
+                self.ftp.rmd(self.ftp_path + self.encode(current))
             except Exception:
                 return False
 
@@ -45,9 +45,9 @@ class ftp_connection(object):
         for i in range(len(dirname)):
             current = '/'.join(dirname[:i + 1])
             try:
-                self.ftp.dir(self.ftp_path + current)
+                self.ftp.dir(self.ftp_path + self.encode(current))
             except Exception:
-                self.ftp.mkd(self.ftp_path + current)
+                self.ftp.mkd(self.ftp_path + self.encode(current))
 
     def encode(self, content):
         """Encode path string"""

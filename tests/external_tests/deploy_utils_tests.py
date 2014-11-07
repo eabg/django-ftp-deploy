@@ -178,6 +178,7 @@ class DeployUtilsTest(TestCase):
         mock_curl = MagicMock(name='curl')
         mock_curl_connection.return_value = mock_curl
 
+
         mock_curl.perform = MagicMock(name='curl_perform_added', side_effect=['content added file1', 'content added file2', 'content added file3'])
         # test create files
         payload = self.payload.gh_payload_added()
@@ -188,7 +189,7 @@ class DeployUtilsTest(TestCase):
         service = Service.objects.get(pk=self.service_ftp_gh.pk)
         self.assertTrue(service.log_set.all()[0].status)
 
-            # test task is removed after success deploy
+        # test task is removed after success deploy
         self.assertFalse(service.task_set.all().exists())
 
         self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), 'content added file1')
