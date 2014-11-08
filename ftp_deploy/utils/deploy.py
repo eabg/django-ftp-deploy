@@ -1,12 +1,11 @@
 import os
 import json
-from ftplib import FTP
 import tempfile
-import time
-from celery import task, current_task
+from celery import current_task
 
 from ftp_deploy.conf import *
 from ftp_deploy.models import Log, Task
+
 from .core import LockError
 from .repo import commits_parser, repository_parser
 from .ftp import ftp_connection
@@ -107,7 +106,6 @@ class Deploy(object):
                     url = 'https://api.bitbucket.org/1.0/repositories%sraw/%s/%s' % (
                         self.data['repository']['absolute_url'],
                         commit['node'], file_path)
-                    url = str(url.encode('utf-8'))
 
                     value = curl.perform(url)
                     self.create_file(file_path, value)
@@ -135,7 +133,6 @@ class Deploy(object):
                     self.data['repository']['owner']['name'],
                     self.data['repository']['name'], commit['id'], file)
 
-                url = str(url.encode('utf-8'))
                 value = curl.perform(url)
                 self.create_file(file, value)
 
@@ -148,10 +145,15 @@ class Deploy(object):
                                   'file': os.path.basename(file_path)})
 
     def create_file(self, file_path, value):
-        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False)
-        temp_file.write(value)
+        temp_file = tempfile.NamedTemporaryFile(mode='w+b', delete=False)
+        # Python 2 support
+        try:
+            temp_file.write(bytes(value, 'utf-8'))
+        except TypeError:
+            temp_file.write(value)
+
         temp_file.close()
-        temp_file = open(temp_file.name, 'r')
+        temp_file = open(temp_file.name, 'rb')
 
         self.ftp.make_dirs(file_path)
         self.ftp.create_file(file_path, temp_file)
