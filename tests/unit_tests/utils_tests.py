@@ -323,9 +323,9 @@ class UtilsCurlTest(TestCase):
         mock_pycurl.assert_has_calls([call.Curl()])
         mock_curl.assert_has_calls([call.setopt('CAINFO', 'certifi_where'), call.setopt('USERPWD', 'curl_username:curl_password')])
 
-    @patch('ftp_deploy.utils.curl.StringIO')
+    @patch('ftp_deploy.utils.curl.io')
     def test_curl_perform_method_perform_curl_GET_request(self, mock_stringIO):
-        type(mock_stringIO.StringIO()).write = PropertyMock(name='io_write', return_value='io_write')
+        type(mock_stringIO()).write = PropertyMock(name='io_write', return_value='io_write')
 
         curl = curl_connection('curl_username', 'curl_password')
         curl.curl = MagicMock(name='mock_curl')
