@@ -2,9 +2,9 @@ import pycurl
 import certifi
 
 try:
-    import StringIO
+    from StringIO import StringIO as io
 except ImportError:
-    from io import StringIO
+    from io import BytesIO as io
 
 
 class curl_connection(object):
@@ -24,11 +24,12 @@ class curl_connection(object):
 
     def perform(self, url):
         """Perform get request and return respond value"""
-        b = StringIO.StringIO()
+        b = io()
         self.curl.setopt(self.curl.URL, str(url))
         self.curl.setopt(self.curl.WRITEFUNCTION, b.write)
         self.curl.perform()
-        return b.getvalue()
+        output = b.getvalue()
+        return output.decode('utf-8')
 
     def perform_post(self, url, post):
         """Perform post request"""
