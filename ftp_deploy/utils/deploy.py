@@ -148,10 +148,10 @@ class Deploy(object):
                                   'file': os.path.basename(file_path)})
 
     def create_file(self, file_path, value):
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False)
         temp_file.write(value)
         temp_file.close()
-        temp_file = open(temp_file.name, 'rb')
+        temp_file = open(temp_file.name, 'r')
 
         self.ftp.make_dirs(file_path)
         self.ftp.create_file(file_path, temp_file)
