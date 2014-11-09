@@ -1,4 +1,6 @@
 import os
+import sys
+
 from ftplib import FTP
 
 from .decorators import check
@@ -40,7 +42,12 @@ class ftp_connection(object):
         """ Create FTP tree directories based on 'file_path'"""
         dirname = os.path.dirname(file_path).split('/')
         for i in range(len(dirname)):
-            current = '/'.join(dirname[:i + 1])
+            # Python 2 support
+            if sys.version_info < (3, 0):
+                current = self.encode('/'.join(dirname[:i + 1]))
+            else:
+                current = '/'.join(dirname[:i + 1])
+
             try:
                 self.ftp.dir(self.ftp_path + current)
             except Exception:
@@ -65,8 +72,7 @@ class ftp_check(ftp_connection):
 
     @check('FTP')
     def check_ftp_path(self):
-        # assert False, self.ftp_path
-        self.ftp.cwd(self.ftp_path.decode('utf-8'))
+        self.ftp.cwd(self.ftp_path)
         self.ftp.cwd('/')
 
     def check_all(self):
