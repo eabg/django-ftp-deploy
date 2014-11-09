@@ -369,7 +369,7 @@ class UtilsFTPTest(TestCase):
         self.assertEqual(self.ftp_connection.host, 'host')
         self.assertEqual(self.ftp_connection.username, 'username')
         self.assertEqual(self.ftp_connection.password, 'password')
-        self.assertEqual(self.ftp_connection.ftp_path, b'ftp/path/')
+        self.assertEqual(self.ftp_connection.ftp_path, 'ftp/path/')
         self.assertFalse(self.ftp_connection.connected)
 
     @patch('ftp_deploy.utils.ftp.FTP')
@@ -381,7 +381,7 @@ class UtilsFTPTest(TestCase):
     def test_ftp_connection_create_file_method_create_file_in_filepath_location(self):
         self.ftp_connection.ftp = MagicMock(name='ftp')
         self.ftp_connection.create_file('path/to/file/file.txt', 'example file content')
-        self.ftp_connection.ftp.assert_has_calls(call.storbinary(b'STOR ftp/path/path/to/file/file.txt', 'example file content'))
+        self.ftp_connection.ftp.assert_has_calls(call.storbinary('STOR ftp/path/path/to/file/file.txt', 'example file content'))
 
     def test_ftp_connection_remove_file_method_remove_file_and_clear_empty_directories(self):
         return_default = lambda value: value
@@ -389,8 +389,8 @@ class UtilsFTPTest(TestCase):
         self.ftp_connection.ftp.rmd = MagicMock(name='rmd', side_effect=[return_default, Exception('no empty directory')])
         self.ftp_connection.remove_file('path/to/file/file.txt')
 
-        self.ftp_connection.ftp.rmd.assert_has_calls([call(b'ftp/path/path/to/file'), call(b'ftp/path/path/to')])
-        self.ftp_connection.ftp.assert_has_calls([call.delete(b'ftp/path/path/to/file/file.txt')])
+        self.ftp_connection.ftp.rmd.assert_has_calls([call('ftp/path/path/to/file'), call('ftp/path/path/to')])
+        self.ftp_connection.ftp.assert_has_calls([call.delete('ftp/path/path/to/file/file.txt')])
 
     def test_ftp_connection_make_dirs_method_create_all_directories_based_on_filepath(self):
         return_default = lambda value: value
@@ -399,8 +399,8 @@ class UtilsFTPTest(TestCase):
         self.ftp_connection.ftp.mkd = MagicMock(name='mkd')
         self.ftp_connection.make_dirs('path/to/file/file.txt')
 
-        self.ftp_connection.ftp.dir.assert_has_calls([call(b'ftp/path/path'), call(b'ftp/path/path/to'), call(b'ftp/path/path/to/file')])
-        self.ftp_connection.ftp.mkd.assert_has_calls([call(b'ftp/path/path/to'), call(b'ftp/path/path/to/file')])
+        self.ftp_connection.ftp.dir.assert_has_calls([call('ftp/path/path'), call('ftp/path/path/to'), call('ftp/path/path/to/file')])
+        self.ftp_connection.ftp.mkd.assert_has_calls([call('ftp/path/path/to'), call('ftp/path/path/to/file')])
 
     def test_ftp_connection_quit_mehtod_perform_quit_only_if_connected_is_true(self):
         self.ftp_connection.ftp = MagicMock(name='ftp')
@@ -423,7 +423,7 @@ class UtilsFTPTest(TestCase):
         check.ftp = MagicMock(name='ftp')
         check.check_ftp_path()
 
-        check.ftp.assert_has_calls([call.cwd(b'ftp/path/')])
+        check.ftp.assert_has_calls([call.cwd('ftp/path/')])
 
     def test_ftp_check_all_perform_all_check_stages(self):
         check = ftp_check('host', 'username', 'password', 'ftp/path/')

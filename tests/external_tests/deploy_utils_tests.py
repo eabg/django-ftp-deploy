@@ -1,9 +1,14 @@
 from ftplib import FTP
 
+# try:
+#     import StringIO
+# except ImportError:
+#     from io import StringIO
+
 try:
-    import StringIO
+    from StringIO import StringIO as _io
 except ImportError:
-    from io import StringIO
+    from io import BytesIO as _io
 
 from django.conf import settings
 from django.test import TestCase, Client
@@ -52,7 +57,7 @@ class DeployUtilsTest(TestCase):
         return ftp
 
     def ftp_read_file(self, ftp, file_path):
-        io = StringIO.StringIO()
+        io = _io()
         ftp.retrbinary("RETR %s" % file_path, callback=lambda data: io.write(data))
         io.seek(0)
         return io.read()
@@ -122,12 +127,12 @@ class DeployUtilsTest(TestCase):
         service = Service.objects.get(pk=self.service_ftp_bb.pk)
         self.assertTrue(service.log_set.all()[0].status)
 
-            # test task is removed after success deploy
+        # test task is removed after success deploy
         self.assertFalse(service.task_set.all().exists())
 
-        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), 'content added file1')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/file2.txt'), 'content added file2')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), 'content added file3')
+        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), b'content added file1')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/file2.txt'), b'content added file2')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), b'content added file3')
         mock_curl.assert_has_calls([call.authenticate(), call.close()])
         calls = ([call('https://api.bitbucket.org/1.0/repositories/username/service/raw/57baa5c89dae/file1.txt'),
                   call('https://api.bitbucket.org/1.0/repositories/username/service/raw/57baa5c89dae/folder1/file2.txt'),
@@ -146,8 +151,8 @@ class DeployUtilsTest(TestCase):
         deploy.perform()
         service = Service.objects.get(pk=self.service_ftp_bb.pk)
         self.assertTrue(service.log_set.all()[1].status)
-        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), 'content modified file1')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), 'content modified file3')
+        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), b'content modified file1')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), b'content modified file3')
 
         # test remove files 1
         payload = self.payload.bb_payload_removed1()
@@ -192,9 +197,9 @@ class DeployUtilsTest(TestCase):
         # test task is removed after success deploy
         self.assertFalse(service.task_set.all().exists())
 
-        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), 'content added file1')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/file2.txt'), 'content added file2')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), 'content added file3')
+        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), b'content added file1')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/file2.txt'), b'content added file2')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), b'content added file3')
         mock_curl.assert_has_calls([call.authenticate(), call.close()])
 
         calls = ([call('https://raw.github.com/Owner/repo_slug/2fa93a45f6c4f9fe30e54036fe0cf764fae0b2a2/file1.txt'),
@@ -214,8 +219,8 @@ class DeployUtilsTest(TestCase):
         deploy.perform()
         service = Service.objects.get(pk=self.service_ftp_gh.pk)
         self.assertTrue(service.log_set.all()[1].status)
-        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), 'content modified file1')
-        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), 'content modified file3')
+        self.assertEqual(self.ftp_read_file(ftp, 'file1.txt'), b'content modified file1')
+        self.assertEqual(self.ftp_read_file(ftp, 'folder1/folder2/folder3/file3.txt'), b'content modified file3')
 
         # test remove files 1
         payload = self.payload.gh_payload_removed1()
