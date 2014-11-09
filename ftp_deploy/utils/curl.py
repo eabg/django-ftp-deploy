@@ -2,9 +2,9 @@ import pycurl
 import certifi
 
 try:
-    from StringIO import StringIO as io
+    from StringIO import StringIO as _io
 except ImportError:
-    from io import BytesIO as io
+    from io import BytesIO as _io
 
 
 class curl_connection(object):
@@ -24,7 +24,7 @@ class curl_connection(object):
 
     def perform(self, url):
         """Perform get request and return respond value"""
-        b = io()
+        b = _io()
         self.curl.setopt(self.curl.URL, str(url))
         self.curl.setopt(self.curl.WRITEFUNCTION, b.write)
         self.curl.perform()
