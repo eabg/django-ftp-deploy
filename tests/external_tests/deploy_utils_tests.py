@@ -1,10 +1,5 @@
 from ftplib import FTP
 
-# try:
-#     import StringIO
-# except ImportError:
-#     from io import StringIO
-
 try:
     from StringIO import StringIO as _io
 except ImportError:
