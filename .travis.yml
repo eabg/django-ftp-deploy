@@ -10,5 +10,4 @@ install:
   - pip install -r requirements/dev.txt
 script:
   - export PYTHONPATH=`pwd`:$PYTHONPATH
-  - cd tests
   - django-admin.py test tests --exclude='external_tests' --settings=tests.conf.conf_travis --exe
