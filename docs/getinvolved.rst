@@ -15,7 +15,7 @@ Introduction
 
      pip install -r requirements/dev.txt
 
-#. Add ``FTP_TEST_SETTINGS`` configuration to your
+#. Add ``FTP_TEST_SETTINGS`` configuration to your settings:
 
    .. code-block:: python
 

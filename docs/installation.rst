@@ -9,7 +9,6 @@ Installation and requirements for django-ftp-deploy module
 Requirements
 ------------
 
-#.  Django 1.7
 #. `celery <http://www.celeryproject.org/>`_
 #. `pycurl <https://pypi.python.org/pypi/pycurl>`_
 #. `certifi <https://pypi.python.org/pypi/certifi>`_

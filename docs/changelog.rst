@@ -5,7 +5,7 @@ Changelog
 
 Changelog for django-ftp-deploy module
 
-v1.5
+v2.0
 ----
 
 * support for Django 1.7
