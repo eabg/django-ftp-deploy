@@ -1,3 +1,7 @@
+v.2.0 09.11.2014
+- Django 1.7 support
+- Python 3 support
+
 v.1.4.1 31.10.2014
 - travis integration
 - fix docs

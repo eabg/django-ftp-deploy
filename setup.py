@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-ftp-deploy',
-    version='1.4.1',
+    version='2.0.0',
     author='Lukasz Pakula',
     author_email='lukaszpakula.pl@gmail.com',
     packages=[
@@ -16,14 +16,14 @@ setup(
         'ftp_deploy.server.views'
     ],
     include_package_data=True,
-    url='http://bitbucket.org/lpakula/django-ftp-deploy',
+    url='https://github.com/lpakula/django-ftp-deploy',
     license='LICENSE.txt',
     description='Auto FTP deployment for django.',
     long_description=open('README.rst').read(),
     install_requires=[
-        "pycurl == 7.19.0.1",
+        "pycurl == 7.19.5",
         "certifi == 0.0.8",
-        "django-braces == 1.2.1",
+        "django-braces == 1.4.0",
         "django-crispy-forms==1.4.0",
         "celery==3.1.8"
     ],
