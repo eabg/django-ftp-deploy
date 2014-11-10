@@ -9,7 +9,7 @@ def test():
 
 def testc():
     """All Tests with coverage"""
-    local("django-admin.py test tests \
+    local("django-admin.py test \
           --settings=tests.conf.conf_coverage --exe")
 
 
